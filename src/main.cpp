@@ -18,7 +18,7 @@ static TaskHandle_t xtaskUIControllerHandle = NULL;
 
 void taskUIController(void *parameter)
 {
-  uint8_t rotaryValue = 0;
+  uint8_t rotaryValue = 70;
   bool rotary_direction = false;
 
   while (true)
