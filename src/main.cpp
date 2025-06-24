@@ -1,10 +1,10 @@
 
-//#include <SPI.h>
+// #include <SPI.h>
 #include <Arduino.h>
 #include "pinDefinitions.h"
 #include "programDefinitions.h"
 #include "graphics.h" // pages and drawing
- 
+
 SPIClass spiHandle = SPIClass(FSPI);
 // create screen object
 graphics::touchScreen touchScreen0(spiHandle, touchScreen0_screen_DataCommand, touchScreen0_screen_ChipSelect, touchScreen0_screen_Reset, touchScreen0_screen_BackLight);
@@ -24,8 +24,8 @@ void taskUIController(void *parameter)
   while (true)
   {
     ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(60000 / UiUpdateRate)); // wait for UiUpdateRate or notification
-    
-xQueueSend(QrotaryISR2taskUIController, (void *)&rotary_direction, 0); //TODO remove
+
+    xQueueSend(QrotaryISR2taskUIController, (void *)&rotary_direction, 0); // TODO remove
 
     // check and process if there is anything in the queue from rotaryEncISR
     while (xQueueReceive(QrotaryISR2taskUIController, (void *)&rotary_direction, 0) == pdTRUE)
@@ -44,12 +44,9 @@ xQueueSend(QrotaryISR2taskUIController, (void *)&rotary_direction, 0); //TODO re
       }
     }
 
-
     Serial.printf("Current rotary position is: %d \n\r", rotaryValue);
   }
 }
-
-
 
 // Encoder interrupt routine for both pins. Notifies taskUIController of rotary encoder input
 // if they are valid and have rotated a full indent
@@ -67,8 +64,8 @@ void IRAM_ATTR rotaryISR()
 
   old_AB <<= 2; // Remember previous state
 
-  if (digitalRead(rotary_ClkPin))       //TODO change digitalRead to PORT read
-    old_AB |= 0x02; // Add current state of pin A
+  if (digitalRead(rotary_ClkPin)) // TODO change digitalRead to PORT read
+    old_AB |= 0x02;               // Add current state of pin A
   if (digitalRead(rotary_DtPin))
     old_AB |= 0x01; // Add current state of pin B
 
@@ -107,7 +104,7 @@ void setup()
   // Configure led pin
   pinMode(led_pin, OUTPUT);
 
-  //configure rotary pins
+  // configure rotary pins
   pinMode(rotary_ClkPin, INPUT_PULLUP);
   pinMode(rotary_DtPin, INPUT_PULLUP);
 
@@ -115,26 +112,29 @@ void setup()
   Serial.begin(115200);
 
   // initialize SPI bus
-  
+
   delay(50);
-  //spiHandle.begin(12, 17, 11, 10);
-  
+  // spiHandle.begin(12, 17, 11, 10);
+
   spiHandle.begin();
-  
+
   // TODO: move this to UIDrawer task
   touchScreen0.init();
   touchScreen0.setRotation(3);
 
-  // enable interupts
-  //attachInterrupt(digitalPinToInterrupt(rotary_ClkPin), rotaryISR, CHANGE);
-  //attachInterrupt(digitalPinToInterrupt(rotary_DtPin), rotaryISR, CHANGE);
+  graphics::Page<3> homePage(5);
 
-  //FreeRTOS tasks
-  // User interface task that does the drawing
-  
+
+  // enable interupts
+  // attachInterrupt(digitalPinToInterrupt(rotary_ClkPin), rotaryISR, CHANGE);
+  // attachInterrupt(digitalPinToInterrupt(rotary_DtPin), rotaryISR, CHANGE);
+
+  // FreeRTOS tasks
+  //  User interface task that does the drawing
+
   xTaskCreatePinnedToCore(      // Use xTaskCreate() in vanilla FreeRTOS
       taskUIController,         // Function to be called
-      "Task UI",            // Name of task
+      "Task UI",                // Name of task
       4096,                     // Stack size (bytes in ESP32, words in FreeRTOS)
       NULL,                     // Parameter to pass to function
       2,                        // Task priority (0 to configMAX_PRIORITIES - 1)
