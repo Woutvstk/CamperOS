@@ -6,11 +6,12 @@
 
 namespace graphics
 {
-    
+
     class touchScreen
     {
 
     public:
+        Adafruit_ILI9341 screen;
         // initiate screen object using initializer list because Adafruit_ILI9341 does not have default constructor TODO: also define touch input object here
         touchScreen(SPIClass &screenSpi, uint8_t screenDc, uint8_t screenCs, uint8_t screenRst, uint8_t screenBacklight) : screen(&screenSpi, screenDc, screenCs, screenRst)
         {
@@ -18,13 +19,12 @@ namespace graphics
         }
 
         void init();
-        void setRotation(uint8_t rotation);
+        void setRotation(uint8_t rotation); //TODO remove, use adafruit gfx directly
         void setBrightness(uint8_t brightness);
-        void drawNumber(uint8_t number);
+        void drawNumber(uint8_t number); //TODO remove, use adafruit gfx directly
 
     private:
         uint8_t pinScreenBacklight;
-        Adafruit_ILI9341 screen;
         // declare touchInput object here
     };
 
