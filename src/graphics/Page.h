@@ -18,7 +18,6 @@ namespace graphics
     };
 
     // max of 255 elements on a page
-
     template <typename pointerType, uint8_t arrayCount>
     class Page
     {
@@ -28,10 +27,8 @@ namespace graphics
         // pageTypesEnum getpageType() { return pageType; };
 
         // fill screen black and draw page, return the amount of elements drawn
-        uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT& screen)
+        uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT &screen)
         {
-            Serial.printf("Now drawing pageType Nr: %d\n", pageType);
-
             if (pageDataStart == NULL)
             {
                 Serial.println("#### ERROR:  pageDataStart is nullpointer  #####");
@@ -39,19 +36,19 @@ namespace graphics
             else
             {
 
-                Serial.printf("Content of first byte of pageDataStart: %d\n", *pageDataStart);
-
                 if (elementArrayPtr == NULL)
                 {
                     Serial.println("###### ERROR: elementArrayPtr is NULL (in page.h)###");
                 }
                 else
                 {
-                    Serial.printf("now calling first element draw, pointer to elements is: %p\n", elementArrayPtr);
                     screen.fillScreen(0); // fill screen black
+
+                    uint16_t elementDataOffset = 0;
                     for (uint8_t i = 0; i < arrayCount; i++)
                     {
-                        (*elementArrayPtr)[i]->draw(screen, pageDataStart);
+                        (*elementArrayPtr)[i]->draw(screen, pageDataStart + elementDataOffset);
+                        elementDataOffset += (*elementArrayPtr)[i]->data_size;
                     }
                 }
             }

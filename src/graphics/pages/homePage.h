@@ -7,13 +7,14 @@
 
 namespace graphics
 {
-    elementRectangle Rectangle0 = elementRectangle(50, 50, 100, 100);
+    elementRectangle Rectangle0 = elementRectangle(50, 50, 100, 100); //TODO: move this to pageData so elements can be moved/resized
     elementCircle Circle0 = elementCircle(120, 80, 90, 90);
 
     pageElement *homePageElements[] =
         {
-            &Circle0,
-            &Rectangle0
+
+            &Rectangle0,
+            &Circle0
 
     };
 

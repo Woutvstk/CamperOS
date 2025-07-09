@@ -24,9 +24,10 @@ namespace graphics
         //@return true for succesfully drawing element
         virtual bool draw(Adafruit_SPITFT &screen, uint8_t *elementDataStart) const
         {
-            Serial.println("Now inside element.draw (class definition of draw)");
+            Serial.println("Now inside element.draw (class definition of draw), this version of .draw shoud never execute");
             return false;
         };
+
         uint16_t getDataSize() { return data_size; };
     };
 
