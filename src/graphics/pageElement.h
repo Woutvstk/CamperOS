@@ -1,6 +1,7 @@
 #pragma once
 #include <stdio.h>
 #include <Arduino.h> //TODO remove
+#include "hardware.h"
 
 namespace graphics
 {
@@ -21,13 +22,12 @@ namespace graphics
 
         //@param dataStart pointer to start of data for this element
         //@return true for succesfully drawing element
-        virtual bool draw(uint8_t *elementDataStart) const
-         {
+        virtual bool draw(Adafruit_SPITFT &screen, uint8_t *elementDataStart) const
+        {
             Serial.println("Now inside element.draw (class definition of draw)");
             return false;
         };
         uint16_t getDataSize() { return data_size; };
-
     };
 
 }

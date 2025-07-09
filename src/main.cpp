@@ -8,7 +8,7 @@
 
 SPIClass spiHandle = SPIClass(FSPI);
 //  create screen object
-graphics::touchScreen touchScreen0(spiHandle, touchScreen0_screen_DataCommand, touchScreen0_screen_ChipSelect, touchScreen0_screen_Reset, touchScreen0_screen_BackLight);
+graphics::touchScreen<Adafruit_ILI9341> touchScreen0(spiHandle, touchScreen0_screen_DataCommand, touchScreen0_screen_ChipSelect, touchScreen0_screen_Reset, touchScreen0_screen_BackLight);
 
 // Task handles
 static TaskHandle_t xtaskUIControllerHandle = NULL;
@@ -32,14 +32,18 @@ void taskUIController(void *parameter)
   }
   else
   {
-    graphics::home.draw(pageDataStart);
+    touchScreen0.setBrightness(125);
+    graphics::home.draw(pageDataStart, touchScreen0.screen);
   }
+
+
+  delay(5000);
 
   while (true)
   {
     ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(60000 / UiUpdateRate)); // wait for UiUpdateRate or notification
 
-    xQueueSend(QrotaryISR2taskUIController, (void *)&rotary_direction, 0); // TODO remove, simulates encoder rotation
+    //xQueueSend(QrotaryISR2taskUIController, (void *)&rotary_direction, 0); // TODO remove, simulates encoder rotation
 
     // check and process if there is anything in the queue from rotaryEncISR
     while (xQueueReceive(QrotaryISR2taskUIController, (void *)&rotary_direction, 0) == pdTRUE)
@@ -131,7 +135,7 @@ void setup()
 
   // TODO: move this to UIDrawer task
   touchScreen0.init();
-  touchScreen0.setRotation(3);
+  touchScreen0.screen.setRotation(3);
 
   delay(200);
   // begin serial to PC

@@ -28,7 +28,7 @@ namespace graphics
         // pageTypesEnum getpageType() { return pageType; };
 
         // fill screen black and draw page, return the amount of elements drawn
-        uint8_t draw(uint8_t *pageDataStart)
+        uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT& screen)
         {
             Serial.printf("Now drawing pageType Nr: %d\n", pageType);
 
@@ -48,9 +48,10 @@ namespace graphics
                 else
                 {
                     Serial.printf("now calling first element draw, pointer to elements is: %p\n", elementArrayPtr);
+                    screen.fillScreen(0); // fill screen black
                     for (uint8_t i = 0; i < arrayCount; i++)
                     {
-                        (*elementArrayPtr)[i]->draw(pageDataStart);
+                        (*elementArrayPtr)[i]->draw(screen, pageDataStart);
                     }
                 }
             }
