@@ -1,13 +1,14 @@
 
-// #include <SPI.h>
+
 #include <Arduino.h>
 #include "pinDefinitions.h"
 #include "programDefinitions.h"
-#include "graphics.h" // pages and drawing
+#include "hardware.h"
+#include "graphics.h" // pages, pageElements, ...
 
 SPIClass spiHandle = SPIClass(FSPI);
-// create screen object
-graphics::touchScreen touchScreen0(spiHandle, touchScreen0_screen_DataCommand, touchScreen0_screen_ChipSelect, touchScreen0_screen_Reset, touchScreen0_screen_BackLight);
+//  create screen object
+graphics::touchScreen<Adafruit_ILI9341> touchScreen0(spiHandle, touchScreen0_screen_DataCommand, touchScreen0_screen_ChipSelect, touchScreen0_screen_Reset, touchScreen0_screen_BackLight);
 
 // Task handles
 static TaskHandle_t xtaskUIControllerHandle = NULL;
@@ -18,14 +19,30 @@ static TaskHandle_t xtaskUIControllerHandle = NULL;
 
 void taskUIController(void *parameter)
 {
+
   uint8_t rotaryValue = 70;
   bool rotary_direction = false;
+
+  uint8_t pageData[] = {0, 0, 150, 0, 200, 0};
+  uint8_t *pageDataStart = &pageData[0];
+
+  if (pageDataStart == NULL)
+  {
+    Serial.println("pageDataStart null pointer in task, not drawing page");
+  }
+  else
+  {
+    touchScreen0.setBrightness(125);
+    graphics::home.draw(pageDataStart, touchScreen0.screen);
+  }
+
+  delay(5000);
 
   while (true)
   {
     ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(60000 / UiUpdateRate)); // wait for UiUpdateRate or notification
 
-    xQueueSend(QrotaryISR2taskUIController, (void *)&rotary_direction, 0); // TODO remove
+    xQueueSend(QrotaryISR2taskUIController, (void *)&rotary_direction, 0); // TODO remove, simulates encoder rotation
 
     // check and process if there is anything in the queue from rotaryEncISR
     while (xQueueReceive(QrotaryISR2taskUIController, (void *)&rotary_direction, 0) == pdTRUE)
@@ -33,14 +50,14 @@ void taskUIController(void *parameter)
       if (rotary_direction)
       {
         rotaryValue -= 10;
-        touchScreen0.setBrightness(rotaryValue);
-        touchScreen0.drawNumber(rotaryValue);
+        // touchScreen0.setBrightness(rotaryValue);
+        //  touchScreen0.drawNumber(rotaryValue);
       }
       else
       {
         rotaryValue += 10;
-        touchScreen0.setBrightness(rotaryValue);
-        touchScreen0.drawNumber(rotaryValue);
+        // touchScreen0.setBrightness(rotaryValue);
+        // touchScreen0.drawNumber(rotaryValue);
       }
     }
 
@@ -100,7 +117,11 @@ void IRAM_ATTR rotaryISR()
 
 void setup()
 {
+  // wait for serial monitor
+  delay(4000);
 
+  Serial.begin(115200);
+  delay(100);
   // Configure led pin
   pinMode(led_pin, OUTPUT);
 
@@ -108,22 +129,15 @@ void setup()
   pinMode(rotary_ClkPin, INPUT_PULLUP);
   pinMode(rotary_DtPin, INPUT_PULLUP);
 
-  // begin serial to PC
-  Serial.begin(115200);
-
   // initialize SPI bus
-
-  delay(50);
-  // spiHandle.begin(12, 17, 11, 10);
-
   spiHandle.begin();
 
   // TODO: move this to UIDrawer task
   touchScreen0.init();
-  touchScreen0.setRotation(3);
+  touchScreen0.screen.setRotation(3);
 
-  graphics::Page<3> homePage(5);
-
+  delay(200);
+  // begin serial to PC
 
   // enable interupts
   // attachInterrupt(digitalPinToInterrupt(rotary_ClkPin), rotaryISR, CHANGE);
@@ -135,7 +149,7 @@ void setup()
   xTaskCreatePinnedToCore(      // Use xTaskCreate() in vanilla FreeRTOS
       taskUIController,         // Function to be called
       "Task UI",                // Name of task
-      4096,                     // Stack size (bytes in ESP32, words in FreeRTOS)
+      8192,                     // Stack size (bytes in ESP32, words in FreeRTOS)
       NULL,                     // Parameter to pass to function
       2,                        // Task priority (0 to configMAX_PRIORITIES - 1)
       &xtaskUIControllerHandle, // Task handle

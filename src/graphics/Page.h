@@ -1,26 +1,67 @@
+#pragma once
+
 #include <stdio.h>
 #include "pageElement.h"
+#include <Arduino.h>       //TODO remove
+#include "elements_list.h" //TODO remove
 
 namespace graphics
 {
 
-    template<uint8_t elementCnt>
+    // maximum of 255 pages
+    enum pageTypesEnum : uint8_t
+    {
+        INVALID = 0,
+        BOOT = 1,
+        HOME = 2,
+        PAGE1 = 3
+    };
+
+    // max of 255 elements on a page
+    template <typename pointerType, uint8_t arrayCount>
     class Page
     {
-
     public:
+        Page(pageTypesEnum pageType, const pointerType (*elementArrayPtr)[arrayCount]) : pageType(pageType), elementArrayPtr(elementArrayPtr) {};
 
+        // pageTypesEnum getpageType() { return pageType; };
 
-        Page(uint8_t pageNr) : pageNr(pageNr){};
+        // fill screen black and draw page, return the amount of elements drawn
+        uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT &screen)
+        {
+            if (pageDataStart == NULL)
+            {
+                Serial.println("#### ERROR:  pageDataStart is nullpointer  #####");
+            }
+            else
+            {
 
-        // private:
+                if (elementArrayPtr == NULL)
+                {
+                    Serial.println("###### ERROR: elementArrayPtr is NULL (in page.h)###");
+                }
+                else
+                {
+                    screen.fillScreen(0); // fill screen black
+
+                    uint16_t elementDataOffset = 0;
+                    for (uint8_t i = 0; i < arrayCount; i++)
+                    {
+                        (*elementArrayPtr)[i]->draw(screen, pageDataStart + elementDataOffset);
+                        elementDataOffset += (*elementArrayPtr)[i]->data_size;
+                    }
+                }
+            }
+
+            return 0;
+        };
+
+        // only update changed elements
+        // uint8_t update(unsigned char *pageDataStart);
 
     private:
-
-        uint8_t pageNr;
-        pageElement elements[elementCnt];
-        
+        pageTypesEnum pageType;
+        const pointerType (*elementArrayPtr)[arrayCount];
     };
 
 }
-
