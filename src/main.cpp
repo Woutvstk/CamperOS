@@ -2,7 +2,8 @@
 
 #include <Arduino.h>
 #include "pinDefinitions.h"
-#include "programDefinitions.h"
+#include "queues.h"
+#include "config.h"
 #include "hardware.h"
 #include "graphics.h" // pages, pageElements, ...
 

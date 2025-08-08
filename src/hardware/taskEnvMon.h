@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include "Adafruit_BME680.h"
 #include <Arduino.h>
+#include "queues.h"
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
