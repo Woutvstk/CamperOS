@@ -1,0 +1,16 @@
+#include <Wire.h>
+#include "Adafruit_BME680.h"
+#include <Arduino.h>
+
+#define SEALEVELPRESSURE_HPA (1013.25)
+
+struct BME680
+{
+    float temp;
+    uint32_t press;
+    float hum;
+    uint32_t gas;
+    float alt;
+};
+
+void taskEnvMon(void *parameter);
