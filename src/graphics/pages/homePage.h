@@ -7,23 +7,14 @@
 
 namespace graphics
 {
-    elementRectangle Rectangle0 = elementRectangle(50, 50, 100, 100); //TODO: move this to pageData so elements can be moved/resized
-    elementCircle Circle0 = elementCircle(120, 80, 90, 90);
 
-    pageElement *homePageElements[] =
-        {
+    const uint8_t homePageElementCount = 2;
 
-            &Rectangle0,
-            &Circle0
+    extern pageElement *homePageElements[homePageElementCount];
 
-    };
+    const pageTypesEnum homePageType = HOME;
+    
+    extern pageElement *(*p_homePageElements)[homePageElementCount];
 
-    pageTypesEnum homePageType = HOME;
-    pageElement *(*p_homePageElements)[sizeof(homePageElements) / sizeof(homePageElements[0])] = &homePageElements;
-    // original and working line:
-    // Page<pageElement *, sizeof(homePageElements) / sizeof(homePageElements[0])> home(homePageType, p_homePageElements);
-
-    // new line with error
-    using ElementType = typename std::remove_reference<decltype(homePageElements[0])>::type;
-    Page<ElementType, sizeof(homePageElements) / sizeof(homePageElements[0])> home(homePageType, p_homePageElements);
+    extern Page<pageElement *, homePageElementCount> home;
 }

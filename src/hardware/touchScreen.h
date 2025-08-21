@@ -6,7 +6,7 @@
 
 #include "pinDefinitions.h"
 
-namespace graphics
+namespace hardware
 {
 
     template <typename adf_screenType>

@@ -1,15 +1,14 @@
-
-
 #include <Arduino.h>
+#include "globals.h"
 #include "pinDefinitions.h"
 #include "queues.h"
 #include "config.h"
 #include "hardware.h"
 #include "graphics.h" // pages, pageElements, ...
 
-SPIClass spiHandle = SPIClass(FSPI);
+//SPIClass spiHandle = SPIClass(FSPI);
 //  create screen object
-graphics::touchScreen<Adafruit_ILI9341> touchScreen0(spiHandle, touchScreen0_screen_DataCommand, touchScreen0_screen_ChipSelect, touchScreen0_screen_Reset, touchScreen0_screen_BackLight);
+//hardware::touchScreen<Adafruit_ILI9341> touchScreen0(spiHandle, touchScreen0_screen_DataCommand, touchScreen0_screen_ChipSelect, touchScreen0_screen_Reset, touchScreen0_screen_BackLight);
 
 // Task handles
 static TaskHandle_t xtaskUIControllerHandle = NULL;
@@ -38,7 +37,6 @@ void taskUIController(void *parameter)
   }
 
   delay(5000);
-
   while (true)
   {
     ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(60000 / UiUpdateRate)); // wait for UiUpdateRate or notification
