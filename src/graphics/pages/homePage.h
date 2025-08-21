@@ -1,18 +1,15 @@
-
-
 #include "../Page.h"
 #include "../elements_list.h"
 #include "../pageElement.h"
 #include <stdio.h>
 
+#define homePageElementCount 2
+#define homePageType HOME
+
 namespace graphics
 {
 
-    const uint8_t homePageElementCount = 2;
-
     extern pageElement *homePageElements[homePageElementCount];
-
-    const pageTypesEnum homePageType = HOME;
 
     extern pageElement *(*p_homePageElements)[homePageElementCount];
 

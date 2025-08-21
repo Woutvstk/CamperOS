@@ -1,7 +1,7 @@
 #pragma once
 #include <stdio.h>
 #include <Arduino.h> //TODO remove
-#include "hardware.h"
+#include "hardware/touchScreen.h"
 
 namespace graphics
 {

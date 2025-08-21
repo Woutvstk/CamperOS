@@ -1,6 +1,5 @@
-#pragma once
 #include <Arduino.h>
-#include "hardware.h"
+#include "hardware/touchScreen.h"
 
 extern SPIClass spiHandle;
 

@@ -1,10 +1,10 @@
 #include "taskUiController.h"
 
-// TaskUiController
-// Gathers information and adds it to an array for the taskUiDrawer task
-// handles user input (rotary, touchscreen, ...)
 void taskUiController(void *parameter)
 {
+
+    touchScreen0.init();
+    touchScreen0.screen.setRotation(3);
 
     uint8_t rotaryValue = 70;
     bool rotary_direction = false;
