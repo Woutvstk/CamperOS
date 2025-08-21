@@ -9,6 +9,7 @@ void taskEnvMon(void *parameter)
         Serial.println(F("Could not find a valid BME680 sensor, check wiring!"));
     }
     BME680 tmp;
+
     while (true)
     {
         ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(1000));
