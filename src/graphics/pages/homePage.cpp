@@ -9,8 +9,8 @@ namespace graphics
         {
             &Rectangle0,
             &Circle0
-        
-        };
+
+    };
 
     pageElement *(*p_homePageElements)[sizeof(homePageElements) / sizeof(homePageElements[0])] = &homePageElements;
 

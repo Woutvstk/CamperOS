@@ -7,4 +7,3 @@
 #include "graphics.h" // pages, pageElements, ...
 
 void taskUiController(void *parameter);
-

@@ -13,7 +13,7 @@ namespace graphics
     extern pageElement *homePageElements[homePageElementCount];
 
     const pageTypesEnum homePageType = HOME;
-    
+
     extern pageElement *(*p_homePageElements)[homePageElementCount];
 
     extern Page<pageElement *, homePageElementCount> home;
