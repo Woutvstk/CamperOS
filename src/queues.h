@@ -1,6 +1,12 @@
 #pragma once
 #include "Arduino.h"
-// Structs/Queue's between tasks
+#include "globals.h"
+
+// Task handles
+extern TaskHandle_t xtaskUiControllerHandle;
+extern TaskHandle_t xtaskUiDrawerHandle;
+
+// Queue's between tasks
 
 // QrotaryISR2taskUIController
 #define QrotaryISR2taskUIControllerLength 8
@@ -10,10 +16,14 @@ extern QueueHandle_t QrotaryISR2taskUIController;
 // QtaskUIController2taskDrawer
 struct SdrawerInstruction
 {
-    uint8_t page = 0;
-    void *displaydata;
+    pageTypesEnum page = INVALID;
+    Adafruit_SPITFT &screen;
+    uint8_t *dataStart;
+
+    SdrawerInstruction(pageTypesEnum pageType, Adafruit_SPITFT &screen, uint8_t *dataStart)
+        : page(pageType), screen(screen), dataStart(dataStart) {}
 };
 
-#define QtaskUIController2taskDrawerLength 4
+#define QtaskUIController2taskDrawerLength 1
 #define QtaskUIController2taskDrawerType SdrawerInstruction
 extern QueueHandle_t QtaskUIController2taskDrawer;

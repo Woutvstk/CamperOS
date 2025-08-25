@@ -4,18 +4,12 @@
 #include "pageElement.h"
 #include <Arduino.h>       //TODO remove
 #include "elementList.h" //TODO remove
+#include "globals.h"
 
 namespace graphics
 {
 
-    // maximum of 255 pages
-    enum pageTypesEnum : uint8_t
-    {
-        INVALID = 0,
-        BOOT = 1,
-        HOME = 2,
-        PAGE1 = 3
-    };
+
 
     // max of 255 elements on a page
     template <typename pointerType, uint8_t arrayCount>

@@ -19,14 +19,19 @@ void taskUiController(void *parameter)
     else
     {
         touchScreen0.setBrightness(125);
-        graphics::home.draw(pageDataStart, touchScreen0.screen);
+        SdrawerInstruction struct0 = {HOME, touchScreen0.screen, pageDataStart};
+
+        xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
+        xTaskNotifyGive(xtaskUiDrawerHandle);
+        // graphics::home.draw(pageDataStart, touchScreen0.screen);
     }
 
     delay(5000);
 
     while (true)
     {
-        ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(60000 / UiUpdateRate)); // wait for UiUpdateRate or notification
+
+        ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(60000 / UiUpdateRate)); // wait for UiUpdateRate or notification, portMAX_DELAY for no timeout
 
         xQueueSend(QrotaryISR2taskUIController, (void *)&rotary_direction, 0); // TODO remove, simulates encoder rotation
 
