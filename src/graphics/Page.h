@@ -2,21 +2,19 @@
 
 #include <stdio.h>
 #include "pageElement.h"
-#include <Arduino.h>       //TODO remove
+#include <Arduino.h>     //TODO remove
 #include "elementList.h" //TODO remove
 #include "globals.h"
 
 namespace graphics
 {
 
-    //basePage to use as the class for a struct member in queues
+    // basePage to use as the class for a struct member in queues so that Page object with different template arguments can be stored
     class basePage
     {
-
-
+    public:
+        virtual uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT &screen) = 0;
     };
-
-    
 
     // max of 255 elements on a page
     template <typename pointerType, uint8_t arrayCount>
@@ -28,7 +26,7 @@ namespace graphics
         // pageTypesEnum getpageType() { return pageType; };
 
         // fill screen black and draw page, return the amount of elements drawn
-        uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT &screen)
+        uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT &screen) override
         {
             if (pageDataStart == NULL)
             {

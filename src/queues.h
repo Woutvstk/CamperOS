@@ -17,12 +17,14 @@ extern QueueHandle_t QrotaryISR2taskUIController;
 // QtaskUIController2taskDrawer
 struct SdrawerInstruction
 {
-    graphics::basePage &page;
-    Adafruit_SPITFT &screen;
+    graphics::basePage *page;
+    Adafruit_SPITFT *screen;
     uint8_t *dataStart;
 
-    SdrawerInstruction(graphics::basePage &page, Adafruit_SPITFT &screen, uint8_t *dataStart)
+    SdrawerInstruction(graphics::basePage *page, Adafruit_SPITFT *screen, uint8_t *dataStart)
         : page(page), screen(screen), dataStart(dataStart) {}
+
+    SdrawerInstruction() : page(NULL), screen(NULL), dataStart(NULL) {}
 };
 
 #define QtaskUIController2taskDrawerLength 1

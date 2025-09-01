@@ -10,20 +10,18 @@ void taskUiController(void *parameter)
     bool rotary_direction = false;
 
     uint8_t pageData[] = {0, 0, 150, 0, 200, 0};
-    uint8_t *pageDataStart = &pageData[0];
+    // uint8_t *pageDataStart = &pageData[0];
 
-    if (pageDataStart == NULL)
+    if (&pageData[0] == NULL)
     {
         Serial.println("pageDataStart null pointer in task, not drawing page");
     }
     else
     {
         touchScreen0.setBrightness(125);
-        SdrawerInstruction struct0 = {graphics::home, touchScreen0.screen, pageDataStart};
-
+        SdrawerInstruction struct0 = {&graphics::home, &touchScreen0.screen, &pageData[0]};
         xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
         xTaskNotifyGive(xtaskUiDrawerHandle);
-        // graphics::home.draw(pageDataStart, touchScreen0.screen);
     }
 
     delay(5000);
