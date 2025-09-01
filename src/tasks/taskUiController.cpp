@@ -19,7 +19,7 @@ void taskUiController(void *parameter)
     else
     {
         touchScreen0.setBrightness(125);
-        SdrawerInstruction struct0 = {HOME, touchScreen0.screen, pageDataStart};
+        SdrawerInstruction struct0 = {graphics::home, touchScreen0.screen, pageDataStart};
 
         xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
         xTaskNotifyGive(xtaskUiDrawerHandle);

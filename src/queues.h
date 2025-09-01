@@ -1,6 +1,7 @@
 #pragma once
 #include "Arduino.h"
 #include "globals.h"
+#include "graphics/Page.h"
 
 // Task handles
 extern TaskHandle_t xtaskUiControllerHandle;
@@ -16,12 +17,12 @@ extern QueueHandle_t QrotaryISR2taskUIController;
 // QtaskUIController2taskDrawer
 struct SdrawerInstruction
 {
-    pageTypesEnum page = INVALID;
+    graphics::basePage &page;
     Adafruit_SPITFT &screen;
     uint8_t *dataStart;
 
-    SdrawerInstruction(pageTypesEnum pageType, Adafruit_SPITFT &screen, uint8_t *dataStart)
-        : page(pageType), screen(screen), dataStart(dataStart) {}
+    SdrawerInstruction(graphics::basePage &page, Adafruit_SPITFT &screen, uint8_t *dataStart)
+        : page(page), screen(screen), dataStart(dataStart) {}
 };
 
 #define QtaskUIController2taskDrawerLength 1

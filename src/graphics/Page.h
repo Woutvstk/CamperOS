@@ -9,11 +9,18 @@
 namespace graphics
 {
 
+    //basePage to use as the class for a struct member in queues
+    class basePage
+    {
 
+
+    };
+
+    
 
     // max of 255 elements on a page
     template <typename pointerType, uint8_t arrayCount>
-    class Page
+    class Page : public basePage
     {
     public:
         Page(pageTypesEnum pageType, const pointerType (*elementArrayPtr)[arrayCount]) : pageType(pageType), elementArrayPtr(elementArrayPtr) {};
