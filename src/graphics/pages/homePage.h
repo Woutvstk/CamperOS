@@ -4,14 +4,16 @@
 #include <stdio.h>
 
 #define homePageElementCount 2
-#define homePageType HOME
+
+namespace homePage
+{
+
+    extern graphics::pageElement *homePageElements[homePageElementCount];
+
+    extern graphics::pageElement *(*p_homePageElements)[homePageElementCount];
+}
 
 namespace graphics
 {
-
-    extern pageElement *homePageElements[homePageElementCount];
-
-    extern pageElement *(*p_homePageElements)[homePageElementCount];
-
     extern Page<pageElement *, homePageElementCount> home;
 }

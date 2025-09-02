@@ -21,9 +21,7 @@ namespace graphics
     class Page : public basePage
     {
     public:
-        Page(pageTypesEnum pageType, const pointerType (*elementArrayPtr)[arrayCount]) : pageType(pageType), elementArrayPtr(elementArrayPtr) {};
-
-        // pageTypesEnum getpageType() { return pageType; };
+        Page(const pointerType (*elementArrayPtr)[arrayCount]) : elementArrayPtr(elementArrayPtr) {};
 
         // fill screen black and draw page, return the amount of elements drawn
         uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT &screen) override
@@ -59,7 +57,6 @@ namespace graphics
         // uint8_t update(unsigned char *pageDataStart);
 
     private:
-        pageTypesEnum pageType;
         const pointerType (*elementArrayPtr)[arrayCount];
     };
 
