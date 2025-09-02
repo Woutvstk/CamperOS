@@ -29,7 +29,7 @@ void taskUiController(void *parameter)
         struct0 = {&graphics::environment, &touchScreen0.screen, &pageData[0]};
         xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
         xTaskNotifyGive(xtaskUiDrawerHandle);
-        
+
         Serial.println("Given command for environmentPage, now wait 5sec");
         vTaskDelay(5000);
     }

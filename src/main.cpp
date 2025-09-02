@@ -5,6 +5,7 @@
 
 // List of freeRTOStasks
 #include "tasks/taskUiController.h"
+#include "tasks/taskUiDrawer.h"
 
 TaskHandle_t xtaskUiControllerHandle = NULL;
 TaskHandle_t xtaskUiDrawerHandle = NULL;
@@ -98,14 +99,26 @@ void setup()
   */
 
   // Start tasks
+
+  //---taskUicontroller
   xTaskCreatePinnedToCore(      // Use xTaskCreate() in vanilla FreeRTOS
       taskUiController,         // Function to be called
       "taskUiController",       // Name of task
       8192,                     // Stack size (bytes in ESP32, words in FreeRTOS)
       NULL,                     // Parameter to pass to function
-      2,                        // Task priority (0 to configMAX_PRIORITIES - 1)
+      10,                       // Task priority (0 to configMAX_PRIORITIES - 1) (default 0 to 24)
       &xtaskUiControllerHandle, // Task handle
       tskNO_AFFINITY);          // Select core or tskNO_AFFINITY (ESP32 only)
+
+  //---taskUiDrawer
+  xTaskCreatePinnedToCore(  // Use xTaskCreate() in vanilla FreeRTOS
+      taskUiDrawer,         // Function to be called
+      "taskUiDrawer",       // Name of task
+      8192,                 // Stack size (bytes in ESP32, words in FreeRTOS)
+      NULL,                 // Parameter to pass to function
+      10,                   // Task priority (0 to configMAX_PRIORITIES - 1) (default 0 to 24)
+      &xtaskUiDrawerHandle, // Task handle
+      tskNO_AFFINITY);      // Select core or tskNO_AFFINITY (ESP32 only)
 
   // If this was vanilla FreeRTOS, you'd want to call vTaskStartScheduler() in
   // main after setting up your tasks.
