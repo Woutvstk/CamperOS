@@ -8,8 +8,8 @@ namespace graphics
     {
     public:
         uint16_t color;
-        uint8_t *data;
-        uint8_t dataSize;
+        uint8_t *data = NULL;
+        uint8_t pointCount = 0;
 
         elementGraph(uint16_t p_pos_x_px, uint16_t p_pos_y_px, uint16_t p_size_x_px, uint16_t p_size_y_px, uint16_t p_color)
             : pageElement(p_pos_x_px, p_pos_y_px, p_size_x_px, p_size_y_px), color(p_color) {};

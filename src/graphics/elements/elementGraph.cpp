@@ -7,10 +7,37 @@ namespace graphics
 
     bool elementGraph::draw(Adafruit_SPITFT &screen) const
     {
+        if (data != NULL && pointCount != 0)
+        {
+            uint16_t pointX = 0;
+            uint16_t pointY = 0;
+            uint16_t lastX = 0;
+            uint16_t lastY = 0;
 
-        // graph drawing implementation here
+            screen.drawFastVLine(pos_x_px, pos_y_px, size_y_px, color);
+            screen.drawFastHLine(pos_x_px, pos_y_px + size_y_px, size_x_px, color);
 
-        return true;
+            for (uint8_t i = 0; i < pointCount; i++)
+            {
+                pointX = pos_x_px + size_x_px * i / pointCount;
+                pointY = pos_y_px + size_y_px - size_y_px * data[i] / UINT8_MAX;
+
+                if (i != 0)
+                {
+                    screen.drawLine(lastX, lastY, pointX, pointY, color);
+                }
+
+                lastX = pointX;
+                lastY = pointY;
+            }
+
+            return true;
+        }
+        else
+        {
+            Serial.println("Cannot draw graph: *data == NULL or pointCount == 0");
+            return false;
+        }
     };
 
 }

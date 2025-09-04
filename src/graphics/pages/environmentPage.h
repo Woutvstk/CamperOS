@@ -3,7 +3,7 @@
 #include "../pageElement.h"
 #include <stdio.h>
 
-#define environmentPageElementCount 2
+#define environmentPageElementCount 3
 
 namespace graphics
 {
@@ -15,6 +15,7 @@ namespace graphics
 
         elementRectangle Rectangle0;
         elementCircle Circle0;
+        elementGraph Graph0;
 
         pageElement *pageElements[environmentPageElementCount];
     };
