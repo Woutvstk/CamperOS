@@ -8,7 +8,7 @@ namespace graphics
     bool elementRectangle::draw(Adafruit_SPITFT &screen) const
     {
 
-        screen.fillRect(this->start_x_px, this->start_y_px, this->size_x_px, this->size_y_px, color);
+        screen.fillRect(this->pos_x_px, this->pos_y_px, this->size_x_px, this->size_y_px, color);
 
         return true;
     };

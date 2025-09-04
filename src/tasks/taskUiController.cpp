@@ -25,7 +25,7 @@ void taskUiController(void *parameter)
         // if(thisArraySize == lastArraySize) {
 
         touchScreen0.setBrightness(125);
-        graphics::home.Circle0.start_x_px = 100;
+        graphics::home.Circle0.pos_x_px = 100;
 
         SdrawerInstruction struct0 = {&graphics::home, &touchScreen0.screen};
         xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
@@ -34,7 +34,7 @@ void taskUiController(void *parameter)
         Serial.println("Given command for homePage, circlePosX = 100, now wait 5sec");
         vTaskDelay(5000);
 
-        graphics::home.Circle0.start_x_px = 30;
+        graphics::home.Circle0.pos_x_px = 30;
 
         xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
         xTaskNotifyGive(xtaskUiDrawerHandle);

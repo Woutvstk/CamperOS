@@ -11,8 +11,8 @@ namespace graphics
         uint8_t *data;
         uint8_t dataSize;
 
-        elementGraph(uint16_t p_start_x_px, uint16_t p_start_y_px, uint16_t p_size_x_px, uint16_t p_size_y_px, uint16_t p_color)
-            : pageElement(p_start_x_px, p_start_y_px, p_size_x_px, p_size_y_px), color(p_color) {};
+        elementGraph(uint16_t p_pos_x_px, uint16_t p_pos_y_px, uint16_t p_size_x_px, uint16_t p_size_y_px, uint16_t p_color)
+            : pageElement(p_pos_x_px, p_pos_y_px, p_size_x_px, p_size_y_px), color(p_color) {};
         bool draw(Adafruit_SPITFT &screen) const override;
     };
 
