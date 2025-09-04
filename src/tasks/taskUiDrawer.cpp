@@ -9,8 +9,7 @@ void taskUiDrawer(void *parameter)
         SdrawerInstruction currentInstruction;
         if (xQueueReceive(QtaskUIController2taskDrawer, &currentInstruction, 0)) // check if something was received from queue
         {
-            currentInstruction.page->draw(currentInstruction.dataStart, *currentInstruction.screen);
+            currentInstruction.page->draw(*currentInstruction.screen);
         }
-
     }
 }

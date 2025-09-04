@@ -19,12 +19,11 @@ struct SdrawerInstruction
 {
     graphics::Page *page;
     Adafruit_SPITFT *screen;
-    uint8_t *dataStart;
 
-    SdrawerInstruction(graphics::Page *page, Adafruit_SPITFT *screen, uint8_t *dataStart)
-        : page(page), screen(screen), dataStart(dataStart) {}
+    SdrawerInstruction(graphics::Page *page, Adafruit_SPITFT *screen)
+        : page(page), screen(screen) {}
 
-    SdrawerInstruction() : page(NULL), screen(NULL), dataStart(NULL) {}
+    SdrawerInstruction() : page(NULL), screen(NULL) {}
 };
 
 #define QtaskUIController2taskDrawerLength 1

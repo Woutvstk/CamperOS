@@ -5,13 +5,12 @@
 namespace graphics
 {
 
-    bool elementRectangle::draw(Adafruit_SPITFT &screen, uint8_t *elementDataStart) const
+    bool elementRectangle::draw(Adafruit_SPITFT &screen) const
     {
 
-        screen.fillRect(this->start_x_px, this->start_y_px, this->size_x_px, this->size_y_px,
-                        screen.color565(*(elementDataStart + redColorOffset), *(elementDataStart + greenColorOffset), *(elementDataStart + blueColorOffset)));
+        screen.fillRect(this->start_x_px, this->start_y_px, this->size_x_px, this->size_y_px, color);
 
-        return false;
+        return true;
     };
 
 }

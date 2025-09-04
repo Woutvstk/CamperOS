@@ -16,29 +16,21 @@ namespace graphics
         Page(pageElement **pageElements, uint8_t elementCount) : pageElements(pageElements), elementCount(elementCount) {};
 
         // fill screen black and draw page, return the amount of elements drawn
-        uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT &screen)
+        uint8_t draw(Adafruit_SPITFT &screen)
         {
-            if (pageDataStart == NULL)
+
+            if (pageElements == NULL)
             {
-                Serial.println("#### ERROR:  pageDataStart is nullpointer  #####");
+                Serial.println("###### ERROR: elementArrayPtr is NULL (in page.h)###");
             }
             else
             {
+                screen.fillScreen(0); // fill screen black
 
-                if (pageElements == NULL)
+                uint16_t elementDataOffset = 0;
+                for (uint8_t i = 0; i < elementCount; i++)
                 {
-                    Serial.println("###### ERROR: elementArrayPtr is NULL (in page.h)###");
-                }
-                else
-                {
-                    screen.fillScreen(0); // fill screen black
-
-                    uint16_t elementDataOffset = 0;
-                    for (uint8_t i = 0; i < elementCount; i++)
-                    {
-                        pageElements[i]->draw(screen, pageDataStart + elementDataOffset);
-                        elementDataOffset += pageElements[i]->data_size;
-                    }
+                    pageElements[i]->draw(screen);
                 }
             }
 
