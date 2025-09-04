@@ -5,15 +5,20 @@
 
 #define environmentPageElementCount 2
 
-namespace environmentPage
-{
-
-    extern graphics::pageElement *environmentPageElements[environmentPageElementCount];
-
-    extern graphics::pageElement *(*p_environmentPageElements)[environmentPageElementCount];
-}
-
 namespace graphics
 {
-    extern Page<pageElement *, environmentPageElementCount> environment;
+    class environmentPage : public Page
+    {
+
+    public:
+        environmentPage();
+
+        elementRectangle Rectangle0;
+        elementCircle Circle0;
+
+        pageElement *pageElements[environmentPageElementCount];
+    };
+
+    extern environmentPage environment;
+
 }

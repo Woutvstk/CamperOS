@@ -5,15 +5,20 @@
 
 #define homePageElementCount 2
 
-namespace homePage
-{
-
-    extern graphics::pageElement *homePageElements[homePageElementCount];
-
-    extern graphics::pageElement *(*p_homePageElements)[homePageElementCount];
-}
-
 namespace graphics
 {
-    extern Page<pageElement *, homePageElementCount> home;
+    class homePage : public Page
+    {
+
+    public:
+        homePage();
+
+        elementRectangle Rectangle0;
+        elementCircle Circle0;
+
+        pageElement *pageElements[homePageElementCount];
+    };
+
+    extern homePage home;
+
 }

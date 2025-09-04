@@ -9,22 +9,14 @@
 namespace graphics
 {
 
-    // basePage to use as the class for a struct member in queues so that Page object with different template arguments can be stored
-    class basePage
-    {
-    public:
-        virtual uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT &screen) = 0;
-    };
-
     // max of 255 elements on a page
-    template <typename pointerType, uint8_t arrayCount>
-    class Page : public basePage
+    class Page
     {
     public:
-        Page(const pointerType (*elementArrayPtr)[arrayCount]) : elementArrayPtr(elementArrayPtr) {};
+        Page(pageElement **pageElements, uint8_t elementCount) : pageElements(pageElements), elementCount(elementCount) {};
 
         // fill screen black and draw page, return the amount of elements drawn
-        uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT &screen) override
+        uint8_t draw(uint8_t *pageDataStart, Adafruit_SPITFT &screen)
         {
             if (pageDataStart == NULL)
             {
@@ -33,7 +25,7 @@ namespace graphics
             else
             {
 
-                if (elementArrayPtr == NULL)
+                if (pageElements == NULL)
                 {
                     Serial.println("###### ERROR: elementArrayPtr is NULL (in page.h)###");
                 }
@@ -42,10 +34,10 @@ namespace graphics
                     screen.fillScreen(0); // fill screen black
 
                     uint16_t elementDataOffset = 0;
-                    for (uint8_t i = 0; i < arrayCount; i++)
+                    for (uint8_t i = 0; i < elementCount; i++)
                     {
-                        (*elementArrayPtr)[i]->draw(screen, pageDataStart + elementDataOffset);
-                        elementDataOffset += (*elementArrayPtr)[i]->data_size;
+                        pageElements[i]->draw(screen, pageDataStart + elementDataOffset);
+                        elementDataOffset += pageElements[i]->data_size;
                     }
                 }
             }
@@ -53,11 +45,9 @@ namespace graphics
             return 0;
         };
 
-        // only update changed elements
-        // uint8_t update(unsigned char *pageDataStart);
-
     private:
-        const pointerType (*elementArrayPtr)[arrayCount];
+        pageElement **pageElements;
+        uint8_t elementCount;
     };
 
 }

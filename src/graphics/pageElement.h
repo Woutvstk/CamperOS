@@ -10,11 +10,11 @@ namespace graphics
     {
 
     public:
-        const uint16_t start_x_px;
-        const uint16_t start_y_px;
-        const uint16_t size_x_px;
-        const uint16_t size_y_px;
-        const uint16_t data_size;
+        uint16_t start_x_px;
+        uint16_t start_y_px;
+        uint16_t size_x_px;
+        uint16_t size_y_px;
+        uint16_t data_size;
 
         // constructor that takes the start position, (rectangular) size in pixels and data size in number of bytes
         pageElement(uint16_t p_start_x_px, uint16_t p_start_y_px, uint16_t p_size_x_px, uint16_t p_size_y_px, uint16_t p_data_size)
