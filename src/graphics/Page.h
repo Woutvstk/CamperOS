@@ -1,9 +1,6 @@
 #pragma once
-
 #include <stdio.h>
 #include "pageElement.h"
-#include <Arduino.h>     //TODO remove
-#include "elementList.h" //TODO remove
 #include "globals.h"
 
 namespace graphics
@@ -16,7 +13,7 @@ namespace graphics
         Page(pageElement **pageElements, uint8_t elementCount) : pageElements(pageElements), elementCount(elementCount) {};
 
         // fill screen black and draw page, return the amount of elements drawn
-        uint8_t draw(Adafruit_SPITFT &screen)
+        uint8_t draw(Adafruit_SPITFT *screen)
         {
 
             if (pageElements == NULL)
@@ -25,7 +22,7 @@ namespace graphics
             }
             else
             {
-                screen.fillScreen(0); // fill screen black
+                screen->fillScreen(0); // fill screen black
 
                 uint16_t elementDataOffset = 0;
                 for (uint8_t i = 0; i < elementCount; i++)

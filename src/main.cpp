@@ -114,9 +114,9 @@ void setup()
   xTaskCreatePinnedToCore(  // Use xTaskCreate() in vanilla FreeRTOS
       taskUiDrawer,         // Function to be called
       "taskUiDrawer",       // Name of task
-      8192,                 // Stack size (bytes in ESP32, words in FreeRTOS)
+      16000,                // Stack size (bytes in ESP32, words in FreeRTOS)
       NULL,                 // Parameter to pass to function
-      10,                   // Task priority (0 to configMAX_PRIORITIES - 1) (default 0 to 24)
+      8,                    // Task priority (0 to configMAX_PRIORITIES - 1) (default 0 to 24)
       &xtaskUiDrawerHandle, // Task handle
       tskNO_AFFINITY);      // Select core or tskNO_AFFINITY (ESP32 only)
 

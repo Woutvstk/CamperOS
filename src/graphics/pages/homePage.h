@@ -2,6 +2,7 @@
 #include "../elementList.h"
 #include "../pageElement.h"
 #include <stdio.h>
+#include "array"
 
 #define homePageElementCount 2
 
@@ -16,9 +17,8 @@ namespace graphics
         elementRectangle Rectangle0;
         elementCircle Circle0;
 
-        pageElement *pageElements[homePageElementCount];
+        std::array<pageElement *, homePageElementCount> pageElements;
     };
 
     extern homePage home;
-
 }

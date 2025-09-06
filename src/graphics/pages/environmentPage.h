@@ -2,8 +2,9 @@
 #include "../elementList.h"
 #include "../pageElement.h"
 #include <stdio.h>
+#include "array"
 
-#define environmentPageElementCount 3
+#define environmentPageElementCount 4
 
 namespace graphics
 {
@@ -15,11 +16,11 @@ namespace graphics
 
         elementRectangle Rectangle0;
         elementCircle Circle0;
+        elementCircle Circle1;
         elementGraph Graph0;
 
-        pageElement *pageElements[environmentPageElementCount];
+        std::array<pageElement *, environmentPageElementCount> pageElements;
     };
 
     extern environmentPage environment;
-
 }
