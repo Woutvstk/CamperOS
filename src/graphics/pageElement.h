@@ -19,7 +19,7 @@ namespace graphics
             : pos_x_px(p_pos_x_px), pos_y_px(p_pos_y_px), size_x_px(p_size_x_px), size_y_px(p_size_y_px) {};
 
         //@return true for succesfully drawing element
-        virtual bool draw(Adafruit_SPITFT *screen) const
+        virtual bool draw(Adafruit_SPITFT *screen)
         {
             Serial.println("Now inside element.draw (class definition of draw), this version of .draw shoud never be called");
             return false;
