@@ -16,6 +16,11 @@ namespace graphics
     {
         bool functionSucces = true;
 
+        int_pos_x_px = pos_x_px;
+        int_pos_y_px = pos_y_px;
+        int_size_x_px = size_x_px;
+        int_size_y_px = size_y_px;
+
         if (graphLineWidth == 0)
         {
             graphLineWidth = 1;
@@ -45,17 +50,70 @@ namespace graphics
     bool elementGraph::graphWriteFrame(Adafruit_SPITFT *screen)
     {
         bool functionSucces = true;
-        // draw axes
+        // write labels and update drawing window for next part of element
+        // placement of labels is aimed for 3 character labels (e.g. 879, -25, ...)
+        const uint8_t characterWidth = 6;
+        const uint8_t characterHeight = 8;
+
+        if (axesWidth < 1)
+        {
+            axesWidth = 1;
+        }
+        // write marking for labels
         for (uint8_t i = 0; i < axesWidth; i++)
         {
-            screen->writeFastVLine(pos_x_px + i, pos_y_px, size_y_px, axesColor);
-            screen->writeFastHLine(pos_x_px, pos_y_px + size_y_px - i, size_x_px, axesColor);
+            screen->writeFastHLine(int_pos_x_px + 3 * characterWidth, int_pos_y_px + i, characterWidth, axesColor);
+            screen->writeFastHLine(int_pos_x_px + 3 * characterWidth, int_pos_y_px + int_size_y_px - 4 * characterWidth - i, characterWidth, axesColor);
+            screen->writeFastVLine(int_pos_x_px + 4 * characterWidth + i, int_pos_y_px + int_size_y_px - 4 * characterWidth, characterWidth, axesColor);
+            screen->writeFastVLine(int_pos_x_px + int_size_x_px - i, int_pos_y_px + int_size_y_px - 4 * characterWidth, characterWidth, axesColor);
         }
 
-        data_pos_x = pos_x_px + axesWidth;
-        data_pos_y = pos_y_px;
-        data_size_x = size_x_px - axesWidth;
-        data_size_y = size_y_px - axesWidth;
+        // end open write because print has its own start/end write
+        screen->endWrite();
+        screen->setTextColor(axesLabelColor);
+        screen->setCursor(int_pos_x_px + 1, int_pos_y_px + axesWidth);
+        screen->print(axesLabelMaxY);
+
+        screen->setCursor(int_pos_x_px + 1, int_pos_y_px + int_size_y_px - 4 * characterWidth - axesWidth - characterHeight);
+        screen->print(axesLabelMinY);
+
+        screen->setCursor(int_pos_x_px + 4 * characterWidth + axesWidth + 1, int_pos_y_px + int_size_y_px - 4 * characterWidth + 3);
+        screen->print(axesLabelMinX);
+
+        screen->setCursor(int_pos_x_px + int_size_x_px - axesWidth - 1 - 3 * characterWidth, int_pos_y_px + int_size_y_px - 4 * characterWidth + 3);
+        screen->print(axesLabelMaxX);
+        screen->startWrite();
+
+        int_pos_x_px = int_pos_x_px + 4 * characterWidth;
+        // int_pos_y_px = int_pos_y_px + 0;
+        int_size_x_px = int_size_x_px - 4 * characterWidth;
+        int_size_y_px = int_size_y_px - 4 * characterWidth;
+
+        // write axes/Frame and update drawing window for next part of element
+        for (uint8_t i = 0; i < axesWidth; i++)
+        {
+            screen->writeFastVLine(int_pos_x_px + i, int_pos_y_px, int_size_y_px, axesColor);
+            screen->writeFastHLine(int_pos_x_px, int_pos_y_px + int_size_y_px - i, int_size_x_px + 1, axesColor);
+            if (frameAllSides)
+            {
+                screen->writeFastVLine(int_pos_x_px + int_size_x_px - i, int_pos_y_px, int_size_y_px, axesColor);
+                screen->writeFastHLine(int_pos_x_px, int_pos_y_px + i, int_size_x_px, axesColor);
+            }
+        }
+        if (frameAllSides)
+        {
+            int_pos_x_px = int_pos_x_px + axesWidth;
+            int_pos_y_px = int_pos_y_px + axesWidth;
+            int_size_x_px = int_size_x_px - 2 * axesWidth;
+            int_size_y_px = int_size_y_px - 2 * axesWidth + 1;
+        }
+        else
+        {
+            int_pos_x_px = int_pos_x_px + axesWidth;
+            int_pos_y_px = int_pos_y_px;
+            int_size_x_px = int_size_x_px - axesWidth;
+            int_size_y_px = int_size_y_px - axesWidth + 1;
+        }
 
         return functionSucces;
     }
@@ -68,10 +126,11 @@ namespace graphics
         uint16_t x0 = 0;
         uint16_t y0 = 0;
 
+        // write curve collumns as last part of element
         for (uint8_t i = 0; i < pointCount; i++)
         {
-            x1 = data_pos_x + data_size_x * i / pointCount;
-            y1 = data_pos_y + data_size_y - data_size_y * data[i] / UINT8_MAX;
+            x1 = int_pos_x_px + int_size_x_px * i / (pointCount - 1);
+            y1 = int_pos_y_px + int_size_y_px - int_size_y_px * data[i] / UINT8_MAX;
 
             if (i != 0)
             {
@@ -88,7 +147,7 @@ namespace graphics
         return functionSucces;
     }
 
-    // based on Bresenham's line algorithm implementation by adafruit, thx adafruit_GFX
+    // based on Bresenham's line algorithm implementation by Adafruit, thx Adafruit_GFX
     bool elementGraph::graphWriteDataSectionCollumn(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
                                                     Adafruit_SPITFT *screen)
     {
@@ -126,28 +185,28 @@ namespace graphics
         {
             if (steep)
             {
-                screen->writeFastVLine(y0, data_pos_y, x0 - data_pos_y, graphBackgroundColor);
+                screen->writeFastVLine(y0, int_pos_y_px, x0 - int_pos_y_px, graphBackgroundColor);
                 screen->writeFastVLine(y0, x0, graphLineWidth, graphLineColor);
                 if (graphFill)
                 {
-                    screen->writeFastVLine(y0, x0 + graphLineWidth, data_pos_y + data_size_y - x0 - graphLineWidth, graphFillColor);
+                    screen->writeFastVLine(y0, x0 + graphLineWidth, int_pos_y_px + int_size_y_px - x0 - graphLineWidth, graphFillColor);
                 }
                 else
                 {
-                    screen->writeFastVLine(y0, x0 + graphLineWidth, data_pos_y + data_size_y - x0 - graphLineWidth, graphBackgroundColor);
+                    screen->writeFastVLine(y0, x0 + graphLineWidth, int_pos_y_px + int_size_y_px - x0 - graphLineWidth, graphBackgroundColor);
                 }
             }
             else
             {
-                screen->writeFastVLine(x0, data_pos_y, y0 - data_pos_y, graphBackgroundColor);
+                screen->writeFastVLine(x0, int_pos_y_px, y0 - int_pos_y_px, graphBackgroundColor);
                 screen->writeFastVLine(x0, y0, graphLineWidth, graphLineColor);
                 if (graphFill)
                 {
-                    screen->writeFastVLine(x0, y0 + graphLineWidth, data_pos_y + data_size_y - y0 - graphLineWidth, graphFillColor);
+                    screen->writeFastVLine(x0, y0 + graphLineWidth, int_pos_y_px + int_size_y_px - y0 - graphLineWidth, graphFillColor);
                 }
                 else
                 {
-                    screen->writeFastVLine(x0, y0 + graphLineWidth, data_pos_y + data_size_y - y0 - graphLineWidth, graphBackgroundColor);
+                    screen->writeFastVLine(x0, y0 + graphLineWidth, int_pos_y_px + int_size_y_px - y0 - graphLineWidth, graphBackgroundColor);
                 }
             }
             err -= dy;

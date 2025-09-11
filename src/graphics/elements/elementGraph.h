@@ -9,6 +9,13 @@ namespace graphics
     public:
         uint16_t axesColor;
         uint8_t axesWidth = 3;
+        bool frameAllSides = false;
+
+        int16_t axesLabelMaxX = 0;
+        int16_t axesLabelMinX = 0;
+        int16_t axesLabelMaxY = 0;
+        int16_t axesLabelMinY = 0;
+        uint16_t axesLabelColor;
 
         uint16_t graphLineColor;
         uint8_t graphLineWidth = 5;
@@ -22,14 +29,15 @@ namespace graphics
         uint8_t pointCount = 0;
 
         elementGraph(uint16_t p_pos_x_px, uint16_t p_pos_y_px, uint16_t p_size_x_px, uint16_t p_size_y_px, uint16_t p_color)
-            : pageElement(p_pos_x_px, p_pos_y_px, p_size_x_px, p_size_y_px), axesColor(p_color), graphLineColor(p_color), graphFillColor(p_color) {};
+            : pageElement(p_pos_x_px, p_pos_y_px, p_size_x_px, p_size_y_px), axesColor(p_color), graphLineColor(p_color), graphFillColor(p_color), axesLabelColor(p_color) {};
         bool draw(Adafruit_SPITFT *screen) override;
 
     private:
-        uint16_t data_pos_x;
-        uint16_t data_pos_y;
-        uint16_t data_size_x;
-        uint16_t data_size_y;
+        // internal drawing window
+        uint16_t int_pos_x_px;
+        uint16_t int_pos_y_px;
+        uint16_t int_size_x_px;
+        uint16_t int_size_y_px;
 
         bool graphWriteFrame(Adafruit_SPITFT *screen);
         bool graphWriteData(Adafruit_SPITFT *screen);

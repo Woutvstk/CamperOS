@@ -57,6 +57,13 @@ void taskUiController(void *parameter)
         graphics::environment.Graph1.pointCount = sizeof(graphPoints2) / sizeof(graphPoints2[0]);
         graphics::environment.Graph1.graphFill = false;
         graphics::environment.Graph1.graphLineColor = ILI9341_RED;
+        graphics::environment.Graph1.axesLabelMaxX = 10;
+        graphics::environment.Graph1.axesLabelMinX = -10;
+        graphics::environment.Graph1.axesLabelMaxY = 999;
+        graphics::environment.Graph1.axesLabelMinY = 0;
+        graphics::environment.Graph1.axesLabelColor = ILI9341_GREEN;
+        graphics::environment.Graph1.frameAllSides = true;
+        graphics::environment.Graph1.axesWidth = 0;
 
         xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
         xTaskNotifyGive(xtaskUiDrawerHandle);
