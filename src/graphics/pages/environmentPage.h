@@ -16,8 +16,8 @@ namespace graphics
 
         elementRectangle Rectangle0;
         elementCircle Circle0;
-        elementCircle Circle1;
         elementGraph Graph0;
+        elementGraph Graph1;
 
         std::array<pageElement *, environmentPageElementCount> pageElements;
     };

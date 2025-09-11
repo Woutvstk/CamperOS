@@ -12,12 +12,13 @@ void taskUiController(void *parameter)
 
     vTaskDelay(100);
 
+    touchScreen0.setBrightness(100);
+
     while (true)
     {
 
         ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(60000 / UiUpdateRate)); // wait for UiUpdateRate or notification, portMAX_DELAY for no timeout
 
-        touchScreen0.setBrightness(255);
         /*
         // draw home version 1
         graphics::home.Circle0.pos_x_px = 100;
@@ -40,29 +41,24 @@ void taskUiController(void *parameter)
         vTaskDelay(5000);
         */
 
-        // draw environment with graph on it
-        graphics::environment.Graph0.graphLineWidth = 3;
+        // draw environment with graphs on it
+
         struct0.page = &(graphics::environment);
-        uint8_t graphPoints[] = {15,57,45,12,58,123,45,85,24,68,12,2,235,24,220,15,45,18,48,59,69,70};
-        graphics::environment.Graph0.data = (uint8_t *)&graphPoints;
+        uint8_t graphPoints[] = {115, 157, 145, 112, 158, 123, 145, 185, 124, 168, 112, 112, 235, 224, 220, 115, 145, 118, 148, 159, 169, 170};
+        graphics::environment.Graph0.data = (uint8_t *)&graphPoints[0];
         graphics::environment.Graph0.pointCount = sizeof(graphPoints) / sizeof(graphPoints[0]);
+        graphics::environment.Graph0.graphLineWidth = 3;
+        graphics::environment.Graph0.graphFill = true;
+        graphics::environment.Graph0.graphLineColor = ILI9341_GREEN;
+        graphics::environment.Graph0.graphFillColor = ILI9341_DARKGREEN;
 
-        if (graphics::environment.Graph0.data != nullptr)
-        {
-            xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
-            xTaskNotifyGive(xtaskUiDrawerHandle);
-        }
-        else
-        {
-            Serial.println("graph0.data Pointing to NULL");
-        }
-        Serial.println("Given command for environmentPage, now wait 5sec");
-        vTaskDelay(1000);
-
-        graphics::environment.Graph0.graphLineWidth = 7;
+        uint8_t graphPoints2[] = {124, 168, 112, 112, 235, 224, 220, 115, 145, 118, 148, 159, 169, 170};
+        graphics::environment.Graph1.data = (uint8_t *)&graphPoints2[0];
+        graphics::environment.Graph1.pointCount = sizeof(graphPoints2) / sizeof(graphPoints2[0]);
+        graphics::environment.Graph1.graphFill = false;
+        graphics::environment.Graph1.graphLineColor = ILI9341_RED;
 
         xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
         xTaskNotifyGive(xtaskUiDrawerHandle);
-        vTaskDelay(1000);
     }
 }
