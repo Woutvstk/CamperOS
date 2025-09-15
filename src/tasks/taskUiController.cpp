@@ -3,16 +3,16 @@
 void taskUiController(void *parameter)
 {
 
-    touchScreen0.init();
-    touchScreen0.screen.setRotation(display0Rotation);
+    hardware::touchScreen0.init();
+    hardware::touchScreen0.screen->setRotation(display0Rotation);
 
     uint8_t rotaryValue = 70;
     bool rotary_direction = false;
-    SdrawerInstruction struct0 = {&graphics::home, &(touchScreen0.screen)};
+    SdrawerInstruction struct0 = {&graphics::home, hardware::touchScreen0.screen};
 
     vTaskDelay(100);
 
-    touchScreen0.setBrightness(100);
+    hardware::touchScreen0.setBrightness(100);
 
     while (true)
     {

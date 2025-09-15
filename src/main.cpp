@@ -74,6 +74,9 @@ void setup()
   spiHandle.begin();
   delay(100);
 
+  // initialize touchscreens
+  hardware::touchScreen0.init();
+
   /*
   Initialize hardware pins
   */
