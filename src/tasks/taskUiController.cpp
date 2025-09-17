@@ -12,7 +12,9 @@ void taskUiController(void *parameter)
 
     vTaskDelay(100);
 
+    // initialize touchscreens
     hardware::touchScreen0.setBrightness(100);
+    hardware::touchScreen0.init();
 
     while (true)
     {
