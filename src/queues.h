@@ -18,12 +18,12 @@ extern QueueHandle_t QrotaryISR2taskUIController;
 struct SdrawerInstruction
 {
     graphics::Page *page;
-    Adafruit_SPITFT *screen;
+    hardware::touchScreen *touchScreen;
 
-    SdrawerInstruction(graphics::Page *page, Adafruit_SPITFT *screen)
-        : page(page), screen(screen) {}
+    SdrawerInstruction(graphics::Page *page, hardware::touchScreen *touchScreen)
+        : page(page), touchScreen(touchScreen) {}
 
-    SdrawerInstruction() : page(NULL), screen(NULL) {}
+    SdrawerInstruction() : page(NULL), touchScreen(NULL) {}
 };
 
 #define QtaskUIController2taskDrawerLength 1

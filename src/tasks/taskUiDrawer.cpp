@@ -29,7 +29,7 @@ void taskUiDrawer(void *parameter)
             fail = true;
         }
 
-        if (currentInstruction.screen == nullptr)
+        if (currentInstruction.touchScreen->screen == nullptr)
         {
             Serial.println(" [taskUiDrawer] - currentInstruction.screen is a nullptr, not drawing");
             fail = true;
@@ -37,7 +37,7 @@ void taskUiDrawer(void *parameter)
 
         if (!fail)
         {
-            (currentInstruction.page)->draw(currentInstruction.screen);
+            (currentInstruction.page)->draw(currentInstruction.touchScreen->screen);
         }
 
         fail = false;

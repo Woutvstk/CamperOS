@@ -8,7 +8,7 @@ void taskUiController(void *parameter)
 
     uint8_t rotaryValue = 70;
     bool rotary_direction = false;
-    SdrawerInstruction struct0 = {&graphics::home, hardware::touchScreen0.screen};
+    SdrawerInstruction struct0 = {&graphics::home, &(hardware::touchScreen0)};
 
     vTaskDelay(100);
 
