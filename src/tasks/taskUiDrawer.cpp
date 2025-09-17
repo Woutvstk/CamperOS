@@ -4,6 +4,9 @@ void taskUiDrawer(void *parameter)
 {
 
     bool fail = false;
+    unsigned long tempMillis;
+    unsigned long renderTime;
+    unsigned long transferTime;
 
     while (true)
     {
@@ -37,7 +40,26 @@ void taskUiDrawer(void *parameter)
 
         if (!fail)
         {
-            (currentInstruction.page)->draw(currentInstruction.touchScreen->screen);
+            GFXcanvas16 *canvas = NULL;
+            if (currentInstruction.touchScreen->rotation & 1)
+            {
+                canvas = new GFXcanvas16(currentInstruction.touchScreen->screenHeight, currentInstruction.touchScreen->screenWidth);
+            }
+            else
+            {
+                canvas = new GFXcanvas16(currentInstruction.touchScreen->screenWidth, currentInstruction.touchScreen->screenHeight);
+            }
+            currentInstruction.touchScreen->screen->setRotation(currentInstruction.touchScreen->rotation);
+            tempMillis = millis();
+            (currentInstruction.page)->draw(canvas);
+            renderTime = millis() - tempMillis;
+
+            tempMillis = millis();
+            currentInstruction.touchScreen->screen->drawRGBBitmap(0, 0, canvas->getBuffer(), canvas->width(), canvas->height());
+            transferTime = millis() - tempMillis;
+            delete canvas;
+
+            //Serial.printf(" [taskUiDrawer] - renderTime is: %d, transferTime is: %d. Total time: %d\n", renderTime, transferTime, renderTime + transferTime);
         }
 
         fail = false;

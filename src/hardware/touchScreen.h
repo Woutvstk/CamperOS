@@ -11,6 +11,7 @@ namespace hardware
     public:
         const uint16_t screenWidth;
         const uint16_t screenHeight;
+        uint8_t rotation = 0;
         Adafruit_SPITFT *screen;
         // initiate screen object using initializer list because adf_screenType does not have default constructor TODO: also define touch input object here
         touchScreen(Adafruit_SPITFT *screen, uint8_t screenBacklight, uint16_t screenWidth, uint16_t screenHeight) : screen(screen),
