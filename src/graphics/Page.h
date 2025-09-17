@@ -13,12 +13,12 @@ namespace graphics
         Page(pageElement **pageElements, uint8_t elementCount) : pageElements(pageElements), elementCount(elementCount) {};
 
         // fill screen black and draw page, return the amount of elements drawn
-        uint8_t draw(Adafruit_SPITFT *screen)
+        uint8_t draw(Adafruit_GFX *screen)
         {
 
             if (pageElements == NULL)
             {
-                Serial.println("###### ERROR: elementArrayPtr is NULL (in page.h)###");
+                Serial.println(" [Page.draw] - ERROR: elementArrayPtr is NULL");
             }
             else
             {
