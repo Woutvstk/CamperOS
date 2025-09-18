@@ -45,7 +45,7 @@ void taskUiController(void *parameter)
 
         struct0.page = &(graphics::environment);
         uint8_t graphPoints[] = {115, 157, 145, 112, 123, 145, 185, 124, 168, 112, 112, 235, 224, 220, 115, 145, 118, 148, 159, 169, 170, 210, 250, 150, 120, 140, 100, 80};
-        graphics::environment.Graph0.data = (uint8_t *)&graphPoints[];
+        graphics::environment.Graph0.data = (uint8_t *)&graphPoints[0];
         graphics::environment.Graph0.pointCount = (sizeof(graphPoints) / sizeof(graphPoints[0]));
         graphics::environment.Graph0.graphLineWidth = 3;
         graphics::environment.Graph0.graphFill = true;
