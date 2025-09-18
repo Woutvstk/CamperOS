@@ -1,0 +1,47 @@
+#pragma once
+#include "../pageElement.h"
+
+namespace graphics
+{
+    class elementGraph : public pageElement
+    {
+
+    public:
+        uint16_t axesColor;
+        uint8_t axesWidth = 3;
+        bool frameAllSides = false;
+
+        int16_t axesLabelMaxX = 0;
+        int16_t axesLabelMinX = 0;
+        int16_t axesLabelMaxY = 0;
+        int16_t axesLabelMinY = 0;
+        uint16_t axesLabelColor;
+
+        uint16_t graphLineColor;
+        uint8_t graphLineWidth = 5;
+
+        uint16_t graphFillColor;
+        bool graphFill = false;
+
+        uint16_t graphBackgroundColor = 0x0000;
+
+        uint8_t *data = NULL;
+        uint8_t pointCount = 0;
+
+        elementGraph(uint16_t p_pos_x_px, uint16_t p_pos_y_px, uint16_t p_size_x_px, uint16_t p_size_y_px, uint16_t p_color)
+            : pageElement(p_pos_x_px, p_pos_y_px, p_size_x_px, p_size_y_px), axesColor(p_color), graphLineColor(p_color), graphFillColor(p_color), axesLabelColor(p_color) {};
+        bool draw(Adafruit_GFX *screen) override;
+
+    private:
+        // internal drawing window
+        uint16_t int_pos_x_px;
+        uint16_t int_pos_y_px;
+        uint16_t int_size_x_px;
+        uint16_t int_size_y_px;
+
+        bool graphWriteFrame(Adafruit_GFX *screen);
+        bool graphWriteData(Adafruit_GFX *screen);
+        bool graphWriteDataSectionCollumn(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
+                                          Adafruit_GFX *screen);
+    };
+}

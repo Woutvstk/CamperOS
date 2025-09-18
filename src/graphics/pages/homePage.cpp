@@ -2,17 +2,16 @@
 
 namespace graphics
 {
-    elementRectangle Rectangle0 = elementRectangle(50, 50, 100, 100); // TODO: move this to pageData so elements can be moved/resized
-    elementCircle Circle0 = elementCircle(120, 80, 90, 90);
+    homePage::homePage() :
 
-    pageElement *homePageElements[] =
-        {
+                           Page(pageElements.data(), homePageElementCount),
+                           Rectangle0(20, 20, 50, 50, 0xc956),
+                           Circle0(100, 50, 45, 45, 0xca25)
+    {
+        pageElements = {
             &Rectangle0,
-            &Circle0
-
+            &Circle0};
     };
 
-    pageElement *(*p_homePageElements)[sizeof(homePageElements) / sizeof(homePageElements[0])] = &homePageElements;
-
-    Page<pageElement *, homePageElementCount> home(homePageType, p_homePageElements);
+    homePage home = homePage();
 }

@@ -5,9 +5,10 @@
 
 // List of freeRTOStasks
 #include "tasks/taskUiController.h"
+#include "tasks/taskUiDrawer.h"
 
-// Task handles
-static TaskHandle_t xtaskUIControllerHandle = NULL;
+TaskHandle_t xtaskUiControllerHandle = NULL;
+TaskHandle_t xtaskUiDrawerHandle = NULL;
 
 // Encoder interrupt routine for both pins. Notifies taskUIController of rotary encoder input
 // if they are valid and have rotated a full indent
@@ -53,7 +54,7 @@ void IRAM_ATTR rotaryISR()
     {
       Serial.println("### WARNING: QrotaryISR2taskUIController is full, rotary indent was missed ###");
     }
-    xTaskNotifyGive(xtaskUIControllerHandle); // notify taskUIController that an update is needed
+    xTaskNotifyGive(xtaskUiControllerHandle); // notify taskUIController that an update is needed
   }
 
 } // rotaryISR
@@ -98,14 +99,26 @@ void setup()
   */
 
   // Start tasks
+
+  //---taskUicontroller
   xTaskCreatePinnedToCore(      // Use xTaskCreate() in vanilla FreeRTOS
       taskUiController,         // Function to be called
       "taskUiController",       // Name of task
       8192,                     // Stack size (bytes in ESP32, words in FreeRTOS)
       NULL,                     // Parameter to pass to function
-      2,                        // Task priority (0 to configMAX_PRIORITIES - 1)
-      &xtaskUIControllerHandle, // Task handle
+      10,                       // Task priority (0 to configMAX_PRIORITIES - 1) (default 0 to 24)
+      &xtaskUiControllerHandle, // Task handle
       tskNO_AFFINITY);          // Select core or tskNO_AFFINITY (ESP32 only)
+
+  //---taskUiDrawer
+  xTaskCreatePinnedToCore(  // Use xTaskCreate() in vanilla FreeRTOS
+      taskUiDrawer,         // Function to be called
+      "taskUiDrawer",       // Name of task
+      16000,                // Stack size (bytes in ESP32, words in FreeRTOS)
+      NULL,                 // Parameter to pass to function
+      8,                    // Task priority (0 to configMAX_PRIORITIES - 1) (default 0 to 24)
+      &xtaskUiDrawerHandle, // Task handle
+      tskNO_AFFINITY);      // Select core or tskNO_AFFINITY (ESP32 only)
 
   // If this was vanilla FreeRTOS, you'd want to call vTaskStartScheduler() in
   // main after setting up your tasks.

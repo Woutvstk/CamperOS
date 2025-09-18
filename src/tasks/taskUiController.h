@@ -3,7 +3,7 @@
 #include "globals.h"
 #include "queues.h"
 #include "config.h"
-#include "hardware/touchScreen.h"
+#include "hardware/touchScreenList.h"
 #include "graphics.h" // pages, pageElements, ...
 
 // TaskUiController
