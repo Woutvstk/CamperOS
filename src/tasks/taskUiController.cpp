@@ -81,5 +81,14 @@ void taskUiController(void *parameter)
 
         xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
         xTaskNotifyGive(xtaskUiDrawerHandle);
+
+        if (hardware::touchScreen0.touch->touched())
+        {
+            graphics::environment.Circle0.color = ILI9341_RED;
+        }
+        else
+        {
+            graphics::environment.Circle0.color = ILI9341_BLUE;
+        }
     }
 }

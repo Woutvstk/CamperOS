@@ -1,8 +1,17 @@
 #include "touchScreenList.h"
 
+// touchScreen0 pin definitions
+#define touchScreen0_screen_ChipSelect 10
+#define touchScreen0_screen_DataCommand 5
+#define touchScreen0_screen_BackLight 6
+#define touchScreen0_screen_Reset 4
+#define touchScreen0_touch_ChipSelect 9
+#define touchScreen0_touch_IrqPin 46
+
 namespace hardware
 {
     //  create touchScreen0 object
     Adafruit_ILI9341 screen0 = Adafruit_ILI9341(&spiHandle, touchScreen0_screen_DataCommand, touchScreen0_screen_ChipSelect, touchScreen0_screen_Reset);
-    touchScreen touchScreen0 = touchScreen(&screen0, touchScreen0_screen_BackLight, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT);
+    touchInput_XPT2046 touch0 = touchInput_XPT2046(touchScreen0_touch_ChipSelect, touchScreen0_touch_IrqPin);
+    touchScreen touchScreen0 = touchScreen(&screen0, touchScreen0_screen_BackLight, ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT, &touch0, &spiHandle);
 }
