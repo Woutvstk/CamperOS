@@ -3,7 +3,7 @@
 namespace hardware
 {
 
-    bool touchInput_XPT2046::begin(SPIClass *spiHandle)
+    bool touchInput_XPT2046::begin()
     {
         return touch.begin(*spiHandle);
     };

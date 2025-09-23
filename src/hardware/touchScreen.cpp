@@ -10,7 +10,7 @@ namespace hardware
         // parameter 0 to comply to Adafruit_SPITFT.begin function definition
         // Actual begin function called is the one from a derived class
         screen->begin(0);
-        touch->begin(touchSpiHandle);
+        touch->begin();
     }
 
     void touchScreen::setBrightness(uint8_t brightness)

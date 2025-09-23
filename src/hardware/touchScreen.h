@@ -15,15 +15,13 @@ namespace hardware
         uint8_t rotation = 0;
         Adafruit_SPITFT *screen;
         touchInput_Base *touch;
-        SPIClass *touchSpiHandle = nullptr;
         // initiate screen object using initializer list because adf_screenType does not have default constructor TODO: also define touch input object here
-        touchScreen(Adafruit_SPITFT *screen, uint8_t screenBacklight, uint16_t screenWidth, uint16_t screenHeight, touchInput_Base *touch, SPIClass *touchSpiHandle)
+        touchScreen(Adafruit_SPITFT *screen, uint8_t screenBacklight, uint16_t screenWidth, uint16_t screenHeight, touchInput_Base *touch)
             : screen(screen),
               screenWidth(screenWidth),
               screenHeight(screenHeight),
               pinScreenBacklight(screenBacklight),
-              touch(touch),
-              touchSpiHandle(touchSpiHandle) {}
+              touch(touch) {}
 
         void init();
         void setBrightness(uint8_t brightness);
