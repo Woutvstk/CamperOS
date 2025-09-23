@@ -16,7 +16,7 @@ namespace hardware
         Adafruit_SPITFT *screen;
         touchInput_Base *touch;
         // initiate screen object using initializer list because adf_screenType does not have default constructor TODO: also define touch input object here
-        touchScreen(Adafruit_SPITFT *screen, uint8_t screenBacklight, uint16_t screenWidth, uint16_t screenHeight, touchInput_Base *touch)
+        touchScreen(uint8_t screenBacklight, uint16_t screenWidth, uint16_t screenHeight, Adafruit_SPITFT *screen = nullptr, touchInput_Base *touch = nullptr)
             : screen(screen),
               screenWidth(screenWidth),
               screenHeight(screenHeight),

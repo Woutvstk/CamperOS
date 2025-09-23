@@ -5,17 +5,31 @@ namespace hardware
 
     void touchScreen::init()
     {
-        pinMode(pinScreenBacklight, OUTPUT);
-        analogWrite(pinScreenBacklight, 15);
-        // parameter 0 to comply to Adafruit_SPITFT.begin function definition
-        // Actual begin function called is the one from a derived class
-        screen->begin(0);
-        touch->begin();
+        if (screen != nullptr)
+        {
+            // parameter 0 to comply to Adafruit_SPITFT.begin function definition
+            // Actual begin function called is the one from a derived class
+            screen->begin(0);
+            pinMode(pinScreenBacklight, OUTPUT);
+            analogWrite(pinScreenBacklight, 15);
+        }
+
+        if (touch != nullptr)
+        {
+            touch->begin();
+        }
     }
 
     void touchScreen::setBrightness(uint8_t brightness)
     {
-        analogWrite(pinScreenBacklight, brightness);
+        if (screen != nullptr)
+        {
+            analogWrite(pinScreenBacklight, brightness);
+        }
+        else
+        {
+            Serial.printf(" [touchScreen.setBrightness] - Cannot set brightness: screen == nullptr");
+        }
     }
 
 }
