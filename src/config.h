@@ -3,5 +3,5 @@
 
 // diplay 0 settings
 
-#define UiUpdateRate 120 // screen updates per minute
+#define defaultUiControllerNotifyWait 5000 // default wait time for notifyTake in uiController in ms
 #define display0Rotation 3

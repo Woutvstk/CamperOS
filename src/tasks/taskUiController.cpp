@@ -1,12 +1,38 @@
 #include "taskUiController.h"
 
+volatile unsigned long isrTime = 0; // if 0, ISR has not run yet. otherwise: time of last isr
+
+IRAM_ATTR
+void touchInputIsr(void)
+{
+    detachInterrupt(digitalPinToInterrupt(hardware::touchScreen0.touch->IRQ_PIN));
+    isrTime = millis();
+
+    // create variable to store if higher priority task has been woking by notification
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+    // Give notification and store pdTRUE in xHigherPriorityTaskWoken if needed
+    vTaskNotifyGiveFromISR(xtaskUiControllerHandle, &xHigherPriorityTaskWoken);
+
+    // request context switch immediatly after ISR if needed
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
 void taskUiController(void *parameter)
 {
     delay(1000);
+    uint16_t notifyWaitTime = defaultUiControllerNotifyWait;
+    const uint8_t isrIntervalMin = 100; // time in ms
 
     // initialize touchscreens
     hardware::touchScreen0.init();
     hardware::touchScreen0.rotation = 3;
+
+    if (hardware::touchScreen0.touch->IRQ_PIN != 255)
+    {
+        pinMode(hardware::touchScreen0.touch->IRQ_PIN, INPUT);
+        attachInterrupt(digitalPinToInterrupt(hardware::touchScreen0.touch->IRQ_PIN), touchInputIsr, CHANGE);
+    }
 
     uint8_t rotaryValue = 70;
     bool rotary_direction = false;
@@ -18,28 +44,33 @@ void taskUiController(void *parameter)
     while (true)
     {
 
-        ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(60000 / UiUpdateRate)); // wait for UiUpdateRate or notification, portMAX_DELAY for no timeout
-        /*
-        // draw home version 1
-        graphics::home.Circle0.pos_x_px = 100;
-        struct0 = {&graphics::home, &(touchScreen0.screen)};
+        ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(notifyWaitTime)); // wait for UiUpdateRate or notification, portMAX_DELAY for no timeout
+        notifyWaitTime = defaultUiControllerNotifyWait;          // change notifyWaitTime to default. Can be reduced during this run if needed
 
-        xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
-        xTaskNotifyGive(xtaskUiDrawerHandle);
+        if (isrTime > 0)
+        {
+            if (hardware::touchScreen0.touch->touched())
+            {
+                graphics::environment.Circle0.color = ILI9341_GREEN;
+            }
+            else
+            {
+                graphics::environment.Circle0.color = ILI9341_BLUE;
+            }
 
-        Serial.println("Given command for homePage V1, circlePosX = 100, now wait 5sec");
-        vTaskDelay(2000);
-
-
-        // draw home version 2
-        graphics::home.Circle0.pos_x_px = 30;
-
-        xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
-        xTaskNotifyGive(xtaskUiDrawerHandle);
-
-        Serial.println("Given command for homePage V2, circlePosX = 30, now wait 5sec");
-        vTaskDelay(5000);
-        */
+            if ((millis() - isrTime) < isrIntervalMin)
+            {
+                notifyWaitTime = min<uint16_t>(isrIntervalMin, notifyWaitTime);
+            }
+            else
+            {
+                isrTime = 0;
+                if (hardware::touchScreen0.touch->IRQ_PIN != 255)
+                {
+                    attachInterrupt(digitalPinToInterrupt(hardware::touchScreen0.touch->IRQ_PIN), touchInputIsr, CHANGE);
+                }
+            }
+        }
 
         // draw environment with graphs on it
 
@@ -51,12 +82,6 @@ void taskUiController(void *parameter)
         graphics::environment.Graph0.graphFill = true;
         graphics::environment.Graph0.graphLineColor = ILI9341_GREEN;
         graphics::environment.Graph0.graphFillColor = ILI9341_DARKGREEN;
-
-        /*
-        uint8_t graphPoints2[] = {124, 168, 112, 112, 235, 224, 220, 115, 145, 118, 148, 159, 169, 170};
-        graphics::environment.Graph1.data = (uint8_t *)&graphPoints2[0];
-        graphics::environment.Graph1.pointCount = sizeof(graphPoints2) / sizeof(graphPoints2[0]);
-        */
 
         if (startPoint < 13)
         {
@@ -81,14 +106,5 @@ void taskUiController(void *parameter)
 
         xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
         xTaskNotifyGive(xtaskUiDrawerHandle);
-
-        if (hardware::touchScreen0.touch->touched())
-        {
-            graphics::environment.Circle0.color = ILI9341_RED;
-        }
-        else
-        {
-            graphics::environment.Circle0.color = ILI9341_BLUE;
-        }
     }
 }
