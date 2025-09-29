@@ -2,7 +2,6 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#define UINT12_MAX 4095
 namespace hardware
 {
 
@@ -17,5 +16,6 @@ namespace hardware
 
         virtual bool begin() = 0;
         virtual bool touched() = 0;
+        virtual void readRaw(uint16_t *x, uint16_t *y, uint8_t *z) = 0;
     };
 }

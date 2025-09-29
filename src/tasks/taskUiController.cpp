@@ -41,6 +41,10 @@ void taskUiController(void *parameter)
     vTaskDelay(100);
     uint8_t startPoint = 0;
 
+    uint16_t touchPos_x = 0;
+    uint16_t touchPos_y = 0;
+    uint8_t touch_z = 0;
+
     while (true)
     {
 
@@ -52,6 +56,8 @@ void taskUiController(void *parameter)
             if (hardware::touchScreen0.touch->touched())
             {
                 graphics::environment.Circle0.color = ILI9341_GREEN;
+                hardware::touchScreen0.touchRead(&touchPos_x, &touchPos_y, &touch_z);
+                Serial.printf("X: %d, Y: %d, Z: %d\n", touchPos_x, touchPos_y, touch_z);
             }
             else
             {

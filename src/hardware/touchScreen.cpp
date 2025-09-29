@@ -32,4 +32,12 @@ namespace hardware
         }
     }
 
+    void touchScreen::touchRead(uint16_t *x, uint16_t *y, uint8_t *z)
+    {
+        uint16_t rawX, rawY;
+        touch->readRaw(&rawX, &rawY, z);
+        *x = (rawX - touchCalibrationMinX) * screenHeight / (touchCalibrationMaxX - touchCalibrationMinX);
+        *y = (rawY - touchCalibrationMinY) * screenWidth / (touchCalibrationMaxY - touchCalibrationMinY);
+    }
+
 }
