@@ -16,6 +16,9 @@ namespace hardware
         Adafruit_SPITFT *screen;
 
         touchInput_Base *touch;
+        std::function<void(void)> pIsrRoutine = NULL;
+        volatile unsigned long isrTime = 0; // if 0, ISR has not run yet. otherwise: time of last isr
+        const uint8_t isrIntervalMin = 100; // time in ms
         uint16_t touchCalibrationMinX = 3750;
         uint16_t touchCalibrationMaxX = 220;
         uint16_t touchCalibrationMinY = 3750;
@@ -32,6 +35,10 @@ namespace hardware
         void init();
         void setBrightness(uint8_t brightness);
         void touchRead(uint16_t *x, uint16_t *y, uint8_t *z);
+        void enableTouchIsr(std::function<void(void)> intRoutine);
+        void touchIsr();
+        bool isrWake();
+        void handleIsr(uint16_t *maxNextRunTime);
 
     private:
         uint8_t pinScreenBacklight;

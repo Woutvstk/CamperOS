@@ -1,4 +1,5 @@
 #include "touchScreen.h"
+#include "FunctionalInterrupt.h"
 
 namespace hardware
 {
@@ -17,6 +18,11 @@ namespace hardware
         if (touch != nullptr)
         {
             touch->begin();
+
+            if (touch->IRQ_PIN != 255)
+            {
+                pinMode(touch->IRQ_PIN, INPUT);
+            }
         }
     }
 
@@ -40,4 +46,37 @@ namespace hardware
         *y = (rawY - touchCalibrationMinY) * screenWidth / (touchCalibrationMaxY - touchCalibrationMinY);
     }
 
+    IRAM_ATTR
+    void touchScreen::touchIsr()
+    {
+        detachInterrupt(digitalPinToInterrupt(touch->IRQ_PIN));
+        isrTime = millis();
+    }
+
+    void touchScreen::enableTouchIsr(std::function<void(void)> intRoutine)
+    {
+        pIsrRoutine = intRoutine;
+        attachInterrupt(touch->IRQ_PIN, intRoutine, CHANGE);
+    }
+
+    bool touchScreen::isrWake()
+    {
+        return isrTime != 0;
+    }
+
+    void touchScreen::handleIsr(uint16_t *NextRunTime)
+    {
+        if ((millis() - isrTime) < isrIntervalMin)
+        {
+            *NextRunTime = isrTime + isrIntervalMin;
+        }
+        else
+        {
+            isrTime = 0;
+            if (touch->IRQ_PIN != 255)
+            {
+                this->enableTouchIsr(this->pIsrRoutine);
+            }
+        }
+    }
 }

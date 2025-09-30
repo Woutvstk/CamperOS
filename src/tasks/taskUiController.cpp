@@ -1,12 +1,9 @@
 #include "taskUiController.h"
 
-volatile unsigned long isrTime = 0; // if 0, ISR has not run yet. otherwise: time of last isr
-
 IRAM_ATTR
 void touchInputIsr(void)
 {
-    detachInterrupt(digitalPinToInterrupt(hardware::touchScreen0.touch->IRQ_PIN));
-    isrTime = millis();
+    hardware::touchScreen0.touchIsr();
 
     // create variable to store if higher priority task has been woking by notification
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
@@ -22,17 +19,12 @@ void taskUiController(void *parameter)
 {
     delay(1000);
     uint16_t notifyWaitTime = defaultUiControllerNotifyWait;
-    const uint8_t isrIntervalMin = 100; // time in ms
+    uint16_t nextRunTime = 0;
 
     // initialize touchscreens
     hardware::touchScreen0.init();
+    hardware::touchScreen0.enableTouchIsr(touchInputIsr);
     hardware::touchScreen0.rotation = 3;
-
-    if (hardware::touchScreen0.touch->IRQ_PIN != 255)
-    {
-        pinMode(hardware::touchScreen0.touch->IRQ_PIN, INPUT);
-        attachInterrupt(digitalPinToInterrupt(hardware::touchScreen0.touch->IRQ_PIN), touchInputIsr, CHANGE);
-    }
 
     uint8_t rotaryValue = 70;
     bool rotary_direction = false;
@@ -51,7 +43,7 @@ void taskUiController(void *parameter)
         ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(notifyWaitTime)); // wait for UiUpdateRate or notification, portMAX_DELAY for no timeout
         notifyWaitTime = defaultUiControllerNotifyWait;          // change notifyWaitTime to default. Can be reduced during this run if needed
 
-        if (isrTime > 0)
+        if (hardware::touchScreen0.isrWake())
         {
             if (hardware::touchScreen0.touch->touched())
             {
@@ -63,19 +55,8 @@ void taskUiController(void *parameter)
             {
                 graphics::environment.Circle0.color = ILI9341_BLUE;
             }
-
-            if ((millis() - isrTime) < isrIntervalMin)
-            {
-                notifyWaitTime = min<uint16_t>(isrIntervalMin, notifyWaitTime);
-            }
-            else
-            {
-                isrTime = 0;
-                if (hardware::touchScreen0.touch->IRQ_PIN != 255)
-                {
-                    attachInterrupt(digitalPinToInterrupt(hardware::touchScreen0.touch->IRQ_PIN), touchInputIsr, CHANGE);
-                }
-            }
+            hardware::touchScreen0.handleIsr(&nextRunTime);
+            notifyWaitTime = nextRunTime - millis();
         }
 
         // draw environment with graphs on it
