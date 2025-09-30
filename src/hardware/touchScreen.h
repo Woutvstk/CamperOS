@@ -13,7 +13,6 @@ namespace hardware
         const uint16_t screenWidth;
         const uint16_t screenHeight;
         uint8_t rotation = 0;
-        Adafruit_SPITFT *screen;
 
         touchInput_Base *touch;
         std::function<void(void)> pIsrRoutine = NULL;
@@ -37,10 +36,14 @@ namespace hardware
         void touchRead(uint16_t *x, uint16_t *y, uint8_t *z);
         void enableTouchIsr(std::function<void(void)> intRoutine);
         void touchIsr();
-        bool isrWake();
-        void handleIsr(uint16_t *maxNextRunTime);
+        bool touchIsrWake();
+        void handleTouchIsr(uint16_t *maxNextRunTime);
+        bool hasScreen();
+        void setRotation(uint8_t newRotation);
+        void drawRGBBitmap(int16_t x, int16_t y, uint16_t *bitmap, int16_t w, int16_t h);
 
     private:
+        Adafruit_SPITFT *screen;
         uint8_t pinScreenBacklight;
         // declare touchInput object here
     };

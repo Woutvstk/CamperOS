@@ -59,12 +59,12 @@ namespace hardware
         attachInterrupt(touch->IRQ_PIN, intRoutine, CHANGE);
     }
 
-    bool touchScreen::isrWake()
+    bool touchScreen::touchIsrWake()
     {
         return isrTime != 0;
     }
 
-    void touchScreen::handleIsr(uint16_t *NextRunTime)
+    void touchScreen::handleTouchIsr(uint16_t *NextRunTime)
     {
         if ((millis() - isrTime) < isrIntervalMin)
         {
@@ -75,8 +75,32 @@ namespace hardware
             isrTime = 0;
             if (touch->IRQ_PIN != 255)
             {
-                this->enableTouchIsr(this->pIsrRoutine);
+                
+                if (this->pIsrRoutine == nullptr)
+                {
+                    Serial.println(" [touchScreen.handleTouchIsr] - pIsrRoutine is nullptr");
+                }
+                else
+                {
+                    this->enableTouchIsr(this->pIsrRoutine);
+                }
             }
         }
+    }
+
+    bool touchScreen::hasScreen()
+    {
+        return (screen != nullptr);
+    }
+
+    void touchScreen::setRotation(uint8_t newRotation)
+    {
+        rotation = newRotation % 4;
+        screen->setRotation(rotation);
+    }
+
+    void touchScreen::drawRGBBitmap(int16_t x, int16_t y, uint16_t *bitmap, int16_t w, int16_t h)
+    {
+        screen->drawRGBBitmap(x, y, bitmap, w, h);
     }
 }

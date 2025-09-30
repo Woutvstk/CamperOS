@@ -24,7 +24,7 @@ void taskUiController(void *parameter)
     // initialize touchscreens
     hardware::touchScreen0.init();
     hardware::touchScreen0.enableTouchIsr(touchInputIsr);
-    hardware::touchScreen0.rotation = 3;
+    hardware::touchScreen0.setRotation(3);
 
     uint8_t rotaryValue = 70;
     bool rotary_direction = false;
@@ -43,7 +43,7 @@ void taskUiController(void *parameter)
         ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(notifyWaitTime)); // wait for UiUpdateRate or notification, portMAX_DELAY for no timeout
         notifyWaitTime = defaultUiControllerNotifyWait;          // change notifyWaitTime to default. Can be reduced during this run if needed
 
-        if (hardware::touchScreen0.isrWake())
+        if (hardware::touchScreen0.touchIsrWake())
         {
             if (hardware::touchScreen0.touch->touched())
             {
@@ -55,7 +55,8 @@ void taskUiController(void *parameter)
             {
                 graphics::environment.Circle0.color = ILI9341_BLUE;
             }
-            hardware::touchScreen0.handleIsr(&nextRunTime);
+            hardware::touchScreen0.handleTouchIsr(&nextRunTime);
+
             notifyWaitTime = nextRunTime - millis();
         }
 
