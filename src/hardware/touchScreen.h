@@ -10,8 +10,8 @@ namespace hardware
     {
 
     public:
-        const uint16_t screenWidth;
-        const uint16_t screenHeight;
+        const uint16_t screenSizeX;
+        const uint16_t screenSizeY;
         uint8_t rotation = 0;
 
         touchInput_Base *touch;
@@ -24,10 +24,10 @@ namespace hardware
         uint16_t touchCalibrationMaxY = 350;
 
         // initiate screen object using initializer list because adf_screenType does not have default constructor
-        touchScreen(uint8_t screenBacklight, uint16_t screenWidth, uint16_t screenHeight, Adafruit_SPITFT *screen = nullptr, touchInput_Base *touch = nullptr)
+        touchScreen(uint8_t screenBacklight, uint16_t screenSizeX, uint16_t screenSizeY, Adafruit_SPITFT *screen = nullptr, touchInput_Base *touch = nullptr)
             : screen(screen),
-              screenWidth(screenWidth),
-              screenHeight(screenHeight),
+              screenSizeX(screenSizeX),
+              screenSizeY(screenSizeY),
               pinScreenBacklight(screenBacklight),
               touch(touch) {}
 

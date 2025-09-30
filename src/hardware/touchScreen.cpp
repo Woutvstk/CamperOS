@@ -42,8 +42,8 @@ namespace hardware
     {
         uint16_t rawX, rawY;
         touch->readRaw(&rawX, &rawY, z);
-        *x = (rawX - touchCalibrationMinX) * screenHeight / (touchCalibrationMaxX - touchCalibrationMinX);
-        *y = (rawY - touchCalibrationMinY) * screenWidth / (touchCalibrationMaxY - touchCalibrationMinY);
+        *x = (rawX - touchCalibrationMinX) * screenSizeY / (touchCalibrationMaxX - touchCalibrationMinX);
+        *y = (rawY - touchCalibrationMinY) * screenSizeX / (touchCalibrationMaxY - touchCalibrationMinY);
     }
 
     IRAM_ATTR
@@ -75,7 +75,7 @@ namespace hardware
             isrTime = 0;
             if (touch->IRQ_PIN != 255)
             {
-                
+
                 if (this->pIsrRoutine == nullptr)
                 {
                     Serial.println(" [touchScreen.handleTouchIsr] - pIsrRoutine is nullptr");
@@ -95,8 +95,8 @@ namespace hardware
 
     void touchScreen::setRotation(uint8_t newRotation)
     {
+        // keep screen at orientation 0 and rotate canvas
         rotation = newRotation % 4;
-        screen->setRotation(rotation);
     }
 
     void touchScreen::drawRGBBitmap(int16_t x, int16_t y, uint16_t *bitmap, int16_t w, int16_t h)

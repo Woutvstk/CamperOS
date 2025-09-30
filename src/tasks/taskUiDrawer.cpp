@@ -31,21 +31,18 @@ void taskUiDrawer(void *parameter)
         }
         else // all is good to start drawing
         {
-            GFXcanvas16 *canvas = NULL;
-            if (currentInstruction.touchScreen->rotation & 1)
-            {
-                canvas = new GFXcanvas16(currentInstruction.touchScreen->screenHeight, currentInstruction.touchScreen->screenWidth);
-            }
-            else
-            {
-                canvas = new GFXcanvas16(currentInstruction.touchScreen->screenWidth, currentInstruction.touchScreen->screenHeight);
-            }
+            GFXcanvas16 *canvas = new GFXcanvas16(currentInstruction.touchScreen->screenSizeX, currentInstruction.touchScreen->screenSizeY);
+
+            // rotate canvas instead of screen so that rotation calculations happen during rendering instead of data transfer
+            canvas->setRotation(currentInstruction.touchScreen->rotation);
+
             tempMillis = millis();
             (currentInstruction.page)->draw(canvas);
             renderTime = millis() - tempMillis;
 
             tempMillis = millis();
-            currentInstruction.touchScreen->drawRGBBitmap(0, 0, canvas->getBuffer(), canvas->width(), canvas->height());
+            // always touchScreen->screenSizeX as width because screen rotation is kept at 0
+            currentInstruction.touchScreen->drawRGBBitmap(0, 0, canvas->getBuffer(), currentInstruction.touchScreen->screenSizeX, currentInstruction.touchScreen->screenSizeY);
             transferTime = millis() - tempMillis;
             delete canvas;
 
