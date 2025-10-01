@@ -1,20 +1,24 @@
-
-
 #include "../Page.h"
-#include "../elements_list.h"
+#include "../elementList.h"
 #include "../pageElement.h"
 #include <stdio.h>
+#include "array"
+
+#define homePageElementCount 2
 
 namespace graphics
 {
+    class homePage : public Page
+    {
 
-    const uint8_t homePageElementCount = 2;
+    public:
+        homePage();
 
-    extern pageElement *homePageElements[homePageElementCount];
+        elementRectangle Rectangle0;
+        elementCircle Circle0;
 
-    const pageTypesEnum homePageType = HOME;
+        std::array<pageElement *, homePageElementCount> pageElements;
+    };
 
-    extern pageElement *(*p_homePageElements)[homePageElementCount];
-
-    extern Page<pageElement *, homePageElementCount> home;
+    extern homePage home;
 }

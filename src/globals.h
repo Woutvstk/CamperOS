@@ -1,8 +1,6 @@
 #pragma once
 #include <Arduino.h>
-#include "hardware.h"
+#include "SPI.h"
 
 extern SPIClass spiHandle;
 
-//  create screen0 object
-extern hardware::touchScreen<Adafruit_ILI9341> touchScreen0;

@@ -1,3 +1,3 @@
 #include "graphics/Page.h"
-#include "graphics/pages_list.h"
+#include "graphics/pageList.h"
 #include "graphics/pageElement.h"

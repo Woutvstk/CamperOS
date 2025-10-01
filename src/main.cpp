@@ -2,71 +2,16 @@
 #include "globals.h"
 #include "pinDefinitions.h"
 #include "queues.h"
-#include "config.h"
-#include "hardware.h"
-#include "graphics.h" // pages, pageElements, ...
 
-// SPIClass spiHandle = SPIClass(FSPI);
-//   create screen object
-// hardware::touchScreen<Adafruit_ILI9341> touchScreen0(spiHandle, touchScreen0_screen_DataCommand, touchScreen0_screen_ChipSelect, touchScreen0_screen_Reset, touchScreen0_screen_BackLight);
+// List of freeRTOStasks
+#include "tasks/taskUiController.h"
+#include "tasks/taskUiDrawer.h"
 
-// Task handles
-static TaskHandle_t xtaskUIControllerHandle = NULL;
-
-// Update user interface screen
-// run at rate UiUpdateRate or when receiving notification
-// This task gathers information, adds it to a struct for the currently displayed page and calls the graphics class to draw this page.
-
-void taskUIController(void *parameter)
-{
-
-  uint8_t rotaryValue = 70;
-  bool rotary_direction = false;
-
-  uint8_t pageData[] = {0, 0, 150, 0, 200, 0};
-  uint8_t *pageDataStart = &pageData[0];
-
-  if (pageDataStart == NULL)
-  {
-    Serial.println("pageDataStart null pointer in task, not drawing page");
-  }
-  else
-  {
-    touchScreen0.setBrightness(125);
-    graphics::home.draw(pageDataStart, touchScreen0.screen);
-  }
-
-  delay(5000);
-  while (true)
-  {
-    ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(60000 / UiUpdateRate)); // wait for UiUpdateRate or notification
-
-    xQueueSend(QrotaryISR2taskUIController, (void *)&rotary_direction, 0); // TODO remove, simulates encoder rotation
-
-    // check and process if there is anything in the queue from rotaryEncISR
-    while (xQueueReceive(QrotaryISR2taskUIController, (void *)&rotary_direction, 0) == pdTRUE)
-    {
-      if (rotary_direction)
-      {
-        rotaryValue -= 10;
-        // touchScreen0.setBrightness(rotaryValue);
-        //  touchScreen0.drawNumber(rotaryValue);
-      }
-      else
-      {
-        rotaryValue += 10;
-        // touchScreen0.setBrightness(rotaryValue);
-        // touchScreen0.drawNumber(rotaryValue);
-      }
-    }
-
-    Serial.printf("Current rotary position is: %d \n\r", rotaryValue);
-  }
-}
+TaskHandle_t xtaskUiControllerHandle = NULL;
+TaskHandle_t xtaskUiDrawerHandle = NULL;
 
 // Encoder interrupt routine for both pins. Notifies taskUIController of rotary encoder input
 // if they are valid and have rotated a full indent
-
 void IRAM_ATTR rotaryISR()
 {
 
@@ -109,7 +54,7 @@ void IRAM_ATTR rotaryISR()
     {
       Serial.println("### WARNING: QrotaryISR2taskUIController is full, rotary indent was missed ###");
     }
-    xTaskNotifyGive(xtaskUIControllerHandle); // notify taskUIController that an update is needed
+    xTaskNotifyGive(xtaskUiControllerHandle); // notify taskUIController that an update is needed
   }
 
 } // rotaryISR
@@ -119,8 +64,20 @@ void setup()
   // wait for serial monitor
   delay(4000);
 
+  /*
+  Initialize communication busses
+  */
+
+  // Initialize serial monitor
   Serial.begin(115200);
+  // initialize SPI bus
+  spiHandle.begin();
   delay(100);
+
+  /*
+  Initialize hardware pins
+  */
+
   // Configure led pin
   pinMode(led_pin, OUTPUT);
 
@@ -128,42 +85,51 @@ void setup()
   pinMode(rotary_ClkPin, INPUT_PULLUP);
   pinMode(rotary_DtPin, INPUT_PULLUP);
 
-  // initialize SPI bus
-  spiHandle.begin();
-
-  // TODO: move this to UIDrawer task
-  touchScreen0.init();
-  touchScreen0.screen.setRotation(3);
-
   delay(200);
-  // begin serial to PC
 
-  // enable interupts
-  // attachInterrupt(digitalPinToInterrupt(rotary_ClkPin), rotaryISR, CHANGE);
-  // attachInterrupt(digitalPinToInterrupt(rotary_DtPin), rotaryISR, CHANGE);
+  /*
+  enable interupts for rotary
+  */
 
-  // FreeRTOS tasks
-  //  User interface task that does the drawing
+  attachInterrupt(digitalPinToInterrupt(rotary_ClkPin), rotaryISR, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(rotary_DtPin), rotaryISR, CHANGE);
 
+  /*
+   FreeRTOS tasks
+  */
+
+  // Start tasks
+
+  //---taskUicontroller
   xTaskCreatePinnedToCore(      // Use xTaskCreate() in vanilla FreeRTOS
-      taskUIController,         // Function to be called
-      "Task UI",                // Name of task
+      taskUiController,         // Function to be called
+      "taskUiController",       // Name of task
       8192,                     // Stack size (bytes in ESP32, words in FreeRTOS)
       NULL,                     // Parameter to pass to function
-      2,                        // Task priority (0 to configMAX_PRIORITIES - 1)
-      &xtaskUIControllerHandle, // Task handle
-      tskNO_AFFINITY);          // Run on one core for demo purposes (ESP32 only)  tskNO_AFFINITY
+      10,                       // Task priority (0 to configMAX_PRIORITIES - 1) (default 0 to 24)
+      &xtaskUiControllerHandle, // Task handle
+      tskNO_AFFINITY);          // Select core or tskNO_AFFINITY (ESP32 only)
+
+  //---taskUiDrawer
+  xTaskCreatePinnedToCore(  // Use xTaskCreate() in vanilla FreeRTOS
+      taskUiDrawer,         // Function to be called
+      "taskUiDrawer",       // Name of task
+      16000,                // Stack size (bytes in ESP32, words in FreeRTOS)
+      NULL,                 // Parameter to pass to function
+      8,                    // Task priority (0 to configMAX_PRIORITIES - 1) (default 0 to 24)
+      &xtaskUiDrawerHandle, // Task handle
+      tskNO_AFFINITY);      // Select core or tskNO_AFFINITY (ESP32 only)
 
   // If this was vanilla FreeRTOS, you'd want to call vTaskStartScheduler() in
   // main after setting up your tasks.
 
-  // delete task setup() and loop()
+  // delete this task: setup() and loop()
   vTaskDelete(NULL);
 }
 
 void loop()
 {
-  Serial.println("inside loop = problem");
+  Serial.println("#### ERROR: inside loop, should not happen ####");
   delay(500);
   // scheduler should never get here. Arduino requeres this do be defined
 }
