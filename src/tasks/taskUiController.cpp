@@ -70,6 +70,11 @@ void taskUiController(void *parameter)
         graphics::environment.Graph0.graphFill = true;
         graphics::environment.Graph0.graphLineColor = ILI9341_GREEN;
         graphics::environment.Graph0.graphFillColor = ILI9341_DARKGREEN;
+        graphics::environment.Text0.text = "This is test text 123456, and some more text";
+        graphics::environment.Text0.textSize = 2;
+        graphics::environment.Text0.enableBorder = true;
+        graphics::environment.Text0.enableFill = true;
+        graphics::environment.Text0.fillColor = ILI9341_RED;
 
         if (startPoint < 13)
         {

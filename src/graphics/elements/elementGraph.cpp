@@ -12,7 +12,7 @@
 namespace graphics
 {
 
-    bool elementGraph::draw(Adafruit_GFX *screen)
+    bool elementGraph::draw(GFXcanvas16 *screen)
     {
         bool functionSucces = true;
 
@@ -47,7 +47,7 @@ namespace graphics
         }
     };
 
-    bool elementGraph::graphWriteFrame(Adafruit_GFX *screen)
+    bool elementGraph::graphWriteFrame(GFXcanvas16 *screen)
     {
         bool functionSucces = true;
         // write labels and update drawing window for next part of element
@@ -71,6 +71,7 @@ namespace graphics
         // end open write because print has its own start/end write
         screen->endWrite();
         screen->setTextColor(axesLabelColor);
+        screen->setTextSize(axesLabelSize);
         screen->setCursor(int_pos_x_px + 1, int_pos_y_px + axesWidth);
         screen->print(axesLabelMaxY);
 
@@ -118,7 +119,7 @@ namespace graphics
         return functionSucces;
     }
 
-    bool elementGraph::graphWriteData(Adafruit_GFX *screen)
+    bool elementGraph::graphWriteData(GFXcanvas16 *screen)
     {
         bool functionSucces = true;
         uint16_t x1 = 0;
@@ -149,7 +150,7 @@ namespace graphics
 
     // based on Bresenham's line algorithm implementation by Adafruit, thx Adafruit_GFX
     bool elementGraph::graphWriteDataSectionCollumn(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-                                                    Adafruit_GFX *screen)
+                                                    GFXcanvas16 *screen)
     {
         bool functionSucces = true;
         int16_t steep = abs(y1 - y0) > abs(x1 - x0);

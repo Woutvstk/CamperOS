@@ -3,7 +3,7 @@
 namespace graphics
 {
 
-    bool elementGraphSimple::draw(Adafruit_GFX *screen)
+    bool elementGraphSimple::draw(GFXcanvas16 *screen)
     {
 
         if (data != nullptr && pointCount != 0)
