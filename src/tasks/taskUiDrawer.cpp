@@ -3,7 +3,6 @@
 void taskUiDrawer(void *parameter)
 {
 
-    bool fail = false;
     unsigned long tempMillis;
     unsigned long renderTime;
     unsigned long transferTime;
@@ -14,54 +13,40 @@ void taskUiDrawer(void *parameter)
 
         SdrawerInstruction currentInstruction;
 
-        if (!xQueueReceive(QtaskUIController2taskDrawer, &currentInstruction, 0)) // check if something was received from queue
+        if (!xQueueReceive(QtaskUIController2taskDrawer, &currentInstruction, 0)) // in case of race condition around controller->drawer queue
         {
-            Serial.println(" [taskUiDrawer] - received notification but no item in queue, not drawing");
-            fail = true;
+            // Serial.println(" [taskUiDrawer] - received notification but no item in queue, not drawing");
         }
-
-        if (&currentInstruction == nullptr)
+        else if (&currentInstruction == nullptr) // in case of programming error in UiController
         {
             Serial.println(" [taskUiDrawer] - currentInstruction is a NULL pointer, not drawing");
-            fail = true;
         }
-
-        if ((currentInstruction.page) == nullptr)
+        else if ((currentInstruction.page) == nullptr) // in case of programming error in UiController
         {
             Serial.println(" [taskUiDrawer] - currentInstruction.page is a null pointer, not draWing");
-            fail = true;
         }
-
-        if (currentInstruction.touchScreen->screen == nullptr)
+        else if (currentInstruction.touchScreen->hasScreen() == 0) // in case the touchScreen does not have a screen defined
         {
-            Serial.println(" [taskUiDrawer] - currentInstruction.screen is a nullptr, not drawing");
-            fail = true;
+            Serial.println(" [taskUiDrawer] - currentInstruction.touchScreen has no screen, not drawing");
         }
-
-        if (!fail)
+        else // all is good to start drawing
         {
-            GFXcanvas16 *canvas = NULL;
-            if (currentInstruction.touchScreen->rotation & 1)
-            {
-                canvas = new GFXcanvas16(currentInstruction.touchScreen->screenHeight, currentInstruction.touchScreen->screenWidth);
-            }
-            else
-            {
-                canvas = new GFXcanvas16(currentInstruction.touchScreen->screenWidth, currentInstruction.touchScreen->screenHeight);
-            }
-            currentInstruction.touchScreen->screen->setRotation(currentInstruction.touchScreen->rotation);
+            GFXcanvas16 *canvas = new GFXcanvas16(currentInstruction.touchScreen->screenSizeX, currentInstruction.touchScreen->screenSizeY);
+
+            // rotate canvas instead of screen so that rotation calculations happen during rendering instead of data transfer
+            canvas->setRotation(currentInstruction.touchScreen->rotation);
+
             tempMillis = millis();
             (currentInstruction.page)->draw(canvas);
             renderTime = millis() - tempMillis;
 
             tempMillis = millis();
-            currentInstruction.touchScreen->screen->drawRGBBitmap(0, 0, canvas->getBuffer(), canvas->width(), canvas->height());
+            // always touchScreen->screenSizeX as width because screen rotation is kept at 0
+            currentInstruction.touchScreen->drawRGBBitmap(0, 0, canvas->getBuffer(), currentInstruction.touchScreen->screenSizeX, currentInstruction.touchScreen->screenSizeY);
             transferTime = millis() - tempMillis;
             delete canvas;
 
-            //Serial.printf(" [taskUiDrawer] - renderTime is: %d, transferTime is: %d. Total time: %d\n", renderTime, transferTime, renderTime + transferTime);
+            // Serial.printf(" [taskUiDrawer] - renderTime is: %d, transferTime is: %d. Total time: %d\n", renderTime, transferTime, renderTime + transferTime);
         }
-
-        fail = false;
     }
 }

@@ -62,7 +62,7 @@ void IRAM_ATTR rotaryISR()
 void setup()
 {
   // wait for serial monitor
-  delay(4000);
+  delay(1000);
 
   /*
   Initialize communication busses

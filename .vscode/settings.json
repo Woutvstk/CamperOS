@@ -15,6 +15,14 @@
         "random": "cpp",
         "type_traits": "cpp",
         "new": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "iosfwd": "cpp",
+        "limits": "cpp",
+        "streambuf": "cpp",
+        "optional": "cpp",
+        "system_error": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp"
     }
 }

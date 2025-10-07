@@ -13,7 +13,7 @@ namespace graphics
         Page(pageElement **pageElements, uint8_t elementCount) : pageElements(pageElements), elementCount(elementCount) {};
 
         // fill screen black and draw page, return the amount of elements drawn
-        uint8_t draw(Adafruit_GFX *screen)
+        uint8_t draw(GFXcanvas16 *screen)
         {
 
             if (pageElements == NULL)
