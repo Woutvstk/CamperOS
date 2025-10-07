@@ -16,9 +16,9 @@ namespace graphics
             pageElement::extractRGBBitmap(screen, pos_x_px, pos_y_px, &textBox);
         }
 
-        for (uint8_t i = 0; i < borderWidth, i++)
+        for (uint8_t i = 0; i < borderWidth; i++)
         {
-            textBox.drawRect(pos_x_px + i, pos_y_px + i, size_x_px - 2 * i, size_y_px - 2 * i, borderColor);
+            textBox.drawRect(i, i, textBox.width() - 2 * i, textBox.height() - 2 * i, borderColor);
         }
 
         textBox.setCursor(0, 0);
