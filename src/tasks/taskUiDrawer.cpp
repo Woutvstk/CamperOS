@@ -33,7 +33,7 @@ void taskUiDrawer(void *parameter)
         {
             GFXcanvas16 *canvas = new GFXcanvas16(currentInstruction.touchScreen->screenSizeX, currentInstruction.touchScreen->screenSizeY);
 
-            // rotate canvas instead of screen so that rotation calculations happens during rendering instead of data transfer
+            // rotate canvas instead of screen so that rotation calculations happen during rendering instead of data transfer
             canvas->setRotation(currentInstruction.touchScreen->rotation);
 
             tempMillis = millis();

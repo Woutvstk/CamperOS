@@ -60,7 +60,7 @@ void taskUiController(void *parameter)
             notifyWaitTime = nextRunTime - millis();
         }
 
-        // draw environment with graphs on it
+                // draw environment with graphs on it
 
         struct0.page = &(graphics::environment);
         uint8_t graphPoints[] = {115, 157, 145, 112, 123, 145, 185, 124, 168, 112, 112, 235, 224, 220, 115, 145, 118, 148, 159, 169, 170, 210, 250, 150, 120, 140, 100, 80};

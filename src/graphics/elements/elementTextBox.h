@@ -12,7 +12,7 @@ namespace graphics
         uint16_t textColor = 0xFFFF;
         bool enableFill = false;
         uint16_t fillColor = 0x0000;
-        bool enableBorder = false;
+        uint8_t borderWidth = 0;
         uint16_t borderColor = 0xFFFF;
 
         elementTextBox(uint16_t pos_x_px, uint16_t pos_y_px, uint16_t size_x_px, uint16_t size_y_px, uint16_t color)
