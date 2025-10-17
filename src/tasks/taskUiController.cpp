@@ -25,6 +25,7 @@ void taskUiController(void *parameter)
     hardware::touchScreen0.init();
     hardware::touchScreen0.enableTouchIsr(touchInputIsr);
     hardware::touchScreen0.setRotation(3);
+    hardware::touchScreen0.setBrightness(255);
 
     uint8_t rotaryValue = 70;
     bool rotary_direction = false;
@@ -70,7 +71,7 @@ void taskUiController(void *parameter)
         graphics::environment.Graph0.graphFill = true;
         graphics::environment.Graph0.graphLineColor = ILI9341_GREEN;
         graphics::environment.Graph0.graphFillColor = ILI9341_DARKGREEN;
-        graphics::environment.Text0.text = "This is test text 123456, and some more text";
+        graphics::environment.Text0.text = "This is test text 12345, and some more text";
         graphics::environment.Text0.textSize = 2;
         graphics::environment.Text0.borderWidth = 2;
         graphics::environment.Text0.borderColor = 0xFFFF;

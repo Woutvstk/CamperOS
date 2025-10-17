@@ -7,49 +7,47 @@ namespace graphics
     {
         // use temporary canvas so that text wrapping can do its thing
 
-        GFXcanvas16 textBox = GFXcanvas16(size_x_px, size_y_px);
         if (enableFill)
         {
-            textBox.fillScreen(fillColor);
-        }
-        else // copy the current background onto the temporary canvas for transparent background
-        {
-            pageElement::extractRGBBitmap(screen, pos_x_px, pos_y_px, &textBox);
+            screen->fillRect(pos_x_px, pos_y_px, size_x_px, size_y_px, fillColor);
         }
 
         for (uint8_t i = 0; i < borderWidth; i++)
         {
-            textBox.drawRect(i, i, textBox.width() - 2 * i, textBox.height() - 2 * i, borderColor);
+            screen->drawRect(pos_x_px + i, pos_y_px + i, size_x_px - 2 * i, size_y_px - 2 * i, borderColor);
         }
 
-        printString(&textBox, text.c_str(), text.length());
+        printString(screen, text.c_str(), text.length());
 
-        screen->drawRGBBitmap(pos_x_px, pos_y_px, textBox.getBuffer(), size_x_px, size_y_px);
         return false;
     };
 
-    void elementTextBox::printString(GFXcanvas16 *textBox, const char *buffer, uint16_t size)
+    void elementTextBox::printString(GFXcanvas16 *screen, const char *buffer, uint16_t size)
     {
-        uint16_t cursor_x = padding + borderWidth;
-        uint16_t cursor_y = padding + borderWidth;
+        uint16_t cursor_x = pos_x_px + padding + borderWidth;
+        uint16_t cursor_y = pos_y_px + padding + borderWidth;
 
         while (size--)
         {
-            uint8_t c = *buffer;
-            if (c == '\n')
-            {                                     // Newline?
-                cursor_x = padding + borderWidth; // Reset x to zero,
-                cursor_y += textSize * 8;         // advance y one line
+
+            if (*buffer == '\n')
+            {                                                // Newline?
+                cursor_x = pos_x_px + padding + borderWidth; // Reset x to zero,
+                cursor_y += textSize * 8;                    // advance y one line
             }
-            else if (c != '\r')
+            else if (*buffer != '\r')
             { // Ignore carriage returns
-                if ((cursor_x + textSize * 6 + padding + borderWidth) > size_x_px)
-                {                                     // Off right?
-                    cursor_x = padding + borderWidth; // Reset x to zero,
-                    cursor_y += textSize * 8;         // advance y one line
+                if ((cursor_x + textSize * 6 + padding + borderWidth) > pos_x_px + size_x_px)
+                {                                                // Off right?
+                    cursor_x = pos_x_px + padding + borderWidth; // Reset x to zero,
+                    cursor_y += textSize * 8;                    // advance y one line
+                    if (*buffer == 0x20)                         // if first character on new line is a space, skip character
+                    {
+                        buffer++;
+                    }
                 }
-                textBox->drawChar(cursor_x, cursor_y, c, textColor, textColor, textSize,
-                                  textSize);
+                screen->drawChar(cursor_x, cursor_y, *buffer, textColor, textColor, textSize,
+                                 textSize);
                 cursor_x += textSize * 6; // Advance x one char
             }
             buffer++;
