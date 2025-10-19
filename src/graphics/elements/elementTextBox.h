@@ -3,6 +3,12 @@
 
 namespace graphics
 {
+    enum alignment
+    {
+        LEFT = 0,
+        CENTRE = 1,
+        RIGHT = 2
+    };
     class elementTextBox : public pageElement
     {
 
@@ -15,6 +21,7 @@ namespace graphics
         uint8_t borderWidth = 0;
         uint16_t borderColor = 0xFFFF;
         uint16_t padding = 3;
+        alignment textAlign = LEFT;
 
         elementTextBox(uint16_t pos_x_px, uint16_t pos_y_px, uint16_t size_x_px, uint16_t size_y_px, uint16_t color)
             : pageElement(pos_x_px, pos_y_px, size_x_px, size_y_px), textColor(color) {};
@@ -22,5 +29,7 @@ namespace graphics
 
     private:
         void printString(GFXcanvas16 *textBox, const char *buffer, uint16_t size);
+        uint16_t getCharsOnLine(const char *buffer);
     };
+
 }
