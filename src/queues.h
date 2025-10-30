@@ -3,18 +3,32 @@
 #include "globals.h"
 #include "graphics/Page.h"
 
-// Task handles
+// forward declare hardware::touchScreen to avoid including hardware header here
+namespace hardware
+{
+    class touchScreen;
+}
+
+/*
+Task handles
+*/
 extern TaskHandle_t xtaskUiControllerHandle;
 extern TaskHandle_t xtaskUiDrawerHandle;
 
-// Queue's between tasks
+/*
+Queue's between tasks
+*/
 
-// QrotaryISR2taskUIController
+/*
+ QrotaryISR2taskUIController
+*/
 #define QrotaryISR2taskUIControllerLength 8
 #define QrotaryISR2taskUIControllerType bool
 extern QueueHandle_t QrotaryISR2taskUIController;
 
-// QtaskUIController2taskDrawer
+/*
+QtaskUIController2taskDrawer
+*/
 struct SdrawerInstruction
 {
     graphics::Page *page;

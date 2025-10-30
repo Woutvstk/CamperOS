@@ -99,8 +99,26 @@ namespace hardware
         rotation = newRotation % 4;
     }
 
+    void touchScreen::applyCalibration(uint16_t *touchPos_x, uint16_t *touchPos_y)
+    {
+        *touchPos_x = mapUint16(*touchPos_x, touchCalibrationMinX, touchCalibrationMaxX, 0, UINT16_MAX);
+        *touchPos_y = mapUint16(*touchPos_y, touchCalibrationMinY, touchCalibrationMaxY, 0, UINT16_MAX);
+    }
+
     void touchScreen::drawRGBBitmap(int16_t x, int16_t y, uint16_t *bitmap, int16_t w, int16_t h)
     {
         screen->drawRGBBitmap(x, y, bitmap, w, h);
+    }
+
+    uint16_t touchScreen::mapUint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, uint16_t out_max)
+    {
+        const uint16_t run = in_max - in_min;
+        if (run == 0)
+        {
+            return -1;
+        }
+        const uint16_t rise = out_max - out_min;
+        const uint16_t delta = x - in_min;
+        return (delta * rise) / run + out_min;
     }
 }

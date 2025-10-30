@@ -1,4 +1,5 @@
 #include "taskUiDrawer.h"
+#include "hardware/touchScreen.h"
 
 void taskUiDrawer(void *parameter)
 {
@@ -43,6 +44,7 @@ void taskUiDrawer(void *parameter)
             tempMillis = millis();
             // always touchScreen->screenSizeX as width because screen rotation is kept at 0
             currentInstruction.touchScreen->drawRGBBitmap(0, 0, canvas->getBuffer(), currentInstruction.touchScreen->screenSizeX, currentInstruction.touchScreen->screenSizeY);
+            currentInstruction.touchScreen->currentPage = currentInstruction.page;
             transferTime = millis() - tempMillis;
             delete canvas;
 

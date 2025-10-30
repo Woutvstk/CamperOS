@@ -39,7 +39,7 @@ void taskUiController(void *parameter)
 
     uint16_t touchPos_x = 0;
     uint16_t touchPos_y = 0;
-    uint8_t touch_z = 0;
+    uint8_t touchPos_z = 0;
 
     while (true)
     {
@@ -47,13 +47,35 @@ void taskUiController(void *parameter)
         ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(notifyWaitTime)); // wait for UiUpdateRate or notification, portMAX_DELAY for no timeout
         notifyWaitTime = defaultUiControllerNotifyWait;          // change notifyWaitTime to default. Can be reduced during this run if needed
 
+        // there was a touch change
         if (touchScreen0.touchIsrWake())
         {
+            // touched or released
             if (touchScreen0.touch->touched())
             {
+                touchScreen0.touchRead(&touchPos_x, &touchPos_y, &touchPos_z);
+                touchScreen0.applyCalibration(&touchPos_x, &touchPos_y);
+                touchInputEvent event0 = touchScreen0.currentPage->getInputEvent(touchPos_x, touchPos_y, touchPos_z);
+                if (event0.sourceElement != nullptr)
+                {
+                    if (touchScreen0.currentPage == &environment)
+                    {
+                        if (event0.sourceElement == &environment.Circle0)
+                        {
+                            printf("touched circle with value: %d\n", event0.data.unsignedNumber);
+                        }
+                        else
+                        {
+                            printf("touched other with value: %d\n", event0.data.unsignedNumber);
+                        }
+                    }
+                    else if (touchScreen0.currentPage == &home)
+                    {
+                        printf("home page with value: %d\n", event0.data.unsignedNumber);
+                    }
+                }
                 environment.Circle0.color = ILI9341_GREEN;
-                touchScreen0.touchRead(&touchPos_x, &touchPos_y, &touch_z);
-                Serial.printf("X: %d, Y: %d, Z: %d\n", touchPos_x, touchPos_y, touch_z);
+                Serial.printf("X: %d, Y: %d, Z: %d\n", touchPos_x, touchPos_y, touchPos_z);
             }
             else
             {

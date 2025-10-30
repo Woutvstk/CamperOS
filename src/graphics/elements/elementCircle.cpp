@@ -10,4 +10,12 @@ namespace graphics
         return true;
     };
 
+    touchInputEvent elementCircle::getTouchInputEvent(uint16_t touchPos_x, uint16_t touchPos_y, uint8_t touch_z)
+    {
+        touchInputEvent event;
+        event.sourceElement = this;
+        event.data.unsignedNumber = 5;
+        return event;
+    }
+
 }
