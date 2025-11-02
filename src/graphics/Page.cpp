@@ -41,7 +41,7 @@ namespace graphics
 
         for (int i = elementCount - 1; i >= 0; i--)
         {
-            if (pageElements[i] && pageElements[i]->touchAble && pageElements[i]->checkHitbox(touchPos_x, touchPos_y, touch_z))
+            if (pageElements[i]->touchAble && pageElements[i]->checkHitbox(touchPos_x, touchPos_y, touch_z))
             {
                 return pageElements[i]->getTouchInputEvent(touchPos_x, touchPos_y, touch_z);
             }

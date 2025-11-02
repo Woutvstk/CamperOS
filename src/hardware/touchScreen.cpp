@@ -38,12 +38,12 @@ namespace hardware
         }
     }
 
-    void touchScreen::touchRead(uint16_t *x, uint16_t *y, uint8_t *z)
+    void touchScreen::touchReadRaw(uint16_t *x, uint16_t *y, uint8_t *z)
     {
-        uint16_t rawX, rawY;
-        touch->readRaw(&rawX, &rawY, z);
-        *x = (rawX - touchCalibrationMinX) * screenSizeY / (touchCalibrationMaxX - touchCalibrationMinX);
-        *y = (rawY - touchCalibrationMinY) * screenSizeX / (touchCalibrationMaxY - touchCalibrationMinY);
+        if (touch != nullptr)
+        {
+            touch->readRaw(x, y, z);
+        }
     }
 
     IRAM_ATTR
@@ -101,8 +101,8 @@ namespace hardware
 
     void touchScreen::applyCalibration(uint16_t *touchPos_x, uint16_t *touchPos_y)
     {
-        *touchPos_x = mapUint16(*touchPos_x, touchCalibrationMinX, touchCalibrationMaxX, 0, UINT16_MAX);
-        *touchPos_y = mapUint16(*touchPos_y, touchCalibrationMinY, touchCalibrationMaxY, 0, UINT16_MAX);
+        *touchPos_x = mapUint16(*touchPos_x, touchCalibrationMinX, touchCalibrationMaxX, 0, screenSizeX);
+        *touchPos_y = mapUint16(*touchPos_y, touchCalibrationMinY, touchCalibrationMaxY, 0, screenSizeY);
     }
 
     void touchScreen::drawRGBBitmap(int16_t x, int16_t y, uint16_t *bitmap, int16_t w, int16_t h)
@@ -112,13 +112,13 @@ namespace hardware
 
     uint16_t touchScreen::mapUint16(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, uint16_t out_max)
     {
-        const uint16_t run = in_max - in_min;
+        const int32_t run = in_max - in_min;
         if (run == 0)
         {
             return -1;
         }
-        const uint16_t rise = out_max - out_min;
-        const uint16_t delta = x - in_min;
-        return (delta * rise) / run + out_min;
+        const int32_t rise = out_max - out_min;
+        const int32_t delta = x - in_min;
+        return (uint16_t)((delta * rise) / run + out_min);
     }
 }

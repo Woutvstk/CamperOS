@@ -84,6 +84,7 @@ namespace graphics
     }
 
     uint16_t elementTextBox::getCharsOnLine(const char *buffer)
+
     {
         uint16_t maxCharsOnLine = ((size_x_px - 2 * (padding + borderWidth)) / (textSize * fontWidth));
 
@@ -96,5 +97,13 @@ namespace graphics
             buffer++;
         }
         return maxCharsOnLine;
+    }
+
+    touchInputEvent elementTextBox::getTouchInputEvent(uint16_t touchPos_x, uint16_t touchPos_y, uint8_t touch_z)
+    {
+        touchInputEvent event;
+        event.sourceElement = this;
+        event.data.unsignedNumber = 5;
+        return event;
     }
 }

@@ -53,7 +53,7 @@ void taskUiController(void *parameter)
             // touched or released
             if (touchScreen0.touch->touched())
             {
-                touchScreen0.touchRead(&touchPos_x, &touchPos_y, &touchPos_z);
+                touchScreen0.touchReadRaw(&touchPos_x, &touchPos_y, &touchPos_z);
                 touchScreen0.applyCalibration(&touchPos_x, &touchPos_y);
                 touchInputEvent event0 = touchScreen0.currentPage->getInputEvent(touchPos_x, touchPos_y, touchPos_z);
                 if (event0.sourceElement != nullptr)
@@ -97,7 +97,7 @@ void taskUiController(void *parameter)
         environment.Graph0.graphLineColor = ILI9341_GREEN;
         environment.Graph0.graphFillColor = ILI9341_DARKGREEN;
         environment.Text0.text = "This is test\ntext 12345, and some\nmore text";
-        environment.Text0.textSize = 2;
+        environment.Text0.textSize = 1;
         environment.Text0.borderWidth = 3;
         environment.Text0.padding = 3;
         environment.Text0.borderColor = 0xFFFF;
@@ -106,6 +106,8 @@ void taskUiController(void *parameter)
         environment.Text0.size_x_px = 200;
         environment.Text0.fillColor = ILI9341_RED;
         environment.Text0.enableFill = true;
+        environment.Circle0.touchAble = true;
+        environment.Text0.touchAble = true;
 
         if (startPoint < 13)
         {
