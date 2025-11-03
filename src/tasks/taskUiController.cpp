@@ -3,6 +3,9 @@
 using namespace graphics;
 using namespace hardware;
 
+// forward declarations
+void initializePages();
+
 IRAM_ATTR
 void touchInputIsr(void)
 {
@@ -40,6 +43,8 @@ void taskUiController(void *parameter)
     uint16_t touchPos_x = 0;
     uint16_t touchPos_y = 0;
     uint8_t touchPos_z = 0;
+
+    initializePages();
 
     while (true)
     {
@@ -86,29 +91,10 @@ void taskUiController(void *parameter)
             notifyWaitTime = nextRunTime - millis();
         }
 
-        // draw environment with graphs on it
-
         struct0.page = &(environment);
         uint8_t graphPoints[] = {115, 157, 145, 112, 123, 145, 185, 124, 168, 112, 112, 235, 224, 220, 115, 145, 118, 148, 159, 169, 170, 210, 250, 150, 120, 140, 100, 80};
         environment.Graph0.data = (uint8_t *)&graphPoints[0];
         environment.Graph0.pointCount = (sizeof(graphPoints) / sizeof(graphPoints[0]));
-        environment.Graph0.graphLineWidth = 3;
-        environment.Graph0.graphFill = true;
-        environment.Graph0.graphLineColor = ILI9341_GREEN;
-        environment.Graph0.graphFillColor = ILI9341_DARKGREEN;
-        environment.Text0.text = "This is test\ntext 12345, and some\nmore text";
-        environment.Text0.textSize = 1;
-        environment.Text0.borderWidth = 3;
-        environment.Text0.padding = 3;
-        environment.Text0.borderColor = 0xFFFF;
-        environment.Text0.textAlign = CENTRE;
-        environment.Text0.size_y_px = 100;
-        environment.Text0.size_x_px = 200;
-        environment.Text0.fillColor = ILI9341_RED;
-        environment.Text0.enableFill = true;
-        environment.Circle0.touchAble = true;
-        environment.Text0.touchAble = true;
-        environment.Cross1.width = 2;
 
         if (startPoint < 13)
         {
@@ -121,17 +107,40 @@ void taskUiController(void *parameter)
 
         environment.Graph1.data = (uint8_t *)&graphPoints[startPoint];
         environment.Graph1.pointCount = 14;
-        environment.Graph1.graphFill = false;
-        environment.Graph1.graphLineColor = ILI9341_RED;
-        environment.Graph1.axesLabelMaxX = 10;
-        environment.Graph1.axesLabelMinX = -10;
-        environment.Graph1.axesLabelMaxY = 999;
-        environment.Graph1.axesLabelMinY = 0;
-        environment.Graph1.axesLabelColor = ILI9341_GREEN;
-        environment.Graph1.frameAllSides = true;
-        environment.Graph1.axesWidth = 0;
 
         xQueueSend(QtaskUIController2taskDrawer, (void *)&struct0, 0);
         xTaskNotifyGive(xtaskUiDrawerHandle);
     }
+}
+
+void initializePages()
+{
+
+    environment.Graph0.graphLineWidth = 3;
+    environment.Graph0.graphFill = true;
+    environment.Graph0.graphLineColor = ILI9341_GREEN;
+    environment.Graph0.graphFillColor = ILI9341_DARKGREEN;
+    environment.Text0.text = "This is test\ntext 12345, and some\nmore text";
+    environment.Text0.textSize = 1;
+    environment.Text0.borderWidth = 3;
+    environment.Text0.padding = 3;
+    environment.Text0.borderColor = 0xFFFF;
+    environment.Text0.textAlign = CENTRE;
+    environment.Text0.size_y_px = 100;
+    environment.Text0.size_x_px = 200;
+    environment.Text0.fillColor = ILI9341_RED;
+    environment.Text0.enableFill = true;
+    environment.Circle0.touchAble = true;
+    environment.Text0.touchAble = true;
+    environment.Cross1.width = 2;
+
+    environment.Graph1.graphFill = false;
+    environment.Graph1.graphLineColor = ILI9341_RED;
+    environment.Graph1.axesLabelMaxX = 10;
+    environment.Graph1.axesLabelMinX = -10;
+    environment.Graph1.axesLabelMaxY = 999;
+    environment.Graph1.axesLabelMinY = 0;
+    environment.Graph1.axesLabelColor = ILI9341_GREEN;
+    environment.Graph1.frameAllSides = true;
+    environment.Graph1.axesWidth = 0;
 }
