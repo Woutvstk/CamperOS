@@ -3,3 +3,4 @@
 #include "elements/elementGraph.h"
 #include "elements/elementGraphSimple.h"
 #include "elements/elementTextBox.h"
+#include "elements/elementCross.h"

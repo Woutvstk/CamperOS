@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "array"
 
-#define environmentPageElementCount 5
+#define environmentPageElementCount 7
 
 namespace graphics
 {
@@ -19,6 +19,8 @@ namespace graphics
         elementGraph Graph0;
         elementTextBox Text0;
         elementGraph Graph1;
+        elementCross Cross0;
+        elementCross Cross1;
 
         std::array<pageElement *, environmentPageElementCount> pageElements;
     };

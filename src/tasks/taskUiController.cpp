@@ -108,6 +108,7 @@ void taskUiController(void *parameter)
         environment.Text0.enableFill = true;
         environment.Circle0.touchAble = true;
         environment.Text0.touchAble = true;
+        environment.Cross1.width = 2;
 
         if (startPoint < 13)
         {
