@@ -21,10 +21,11 @@ namespace hardware
         volatile unsigned long isrTime = 0; // if 0, ISR has not run yet. otherwise: time of last isr
         const uint8_t isrIntervalMin = 100; // time in ms
 
-        uint16_t touchCalibrationMinX = 3750;
-        uint16_t touchCalibrationMaxX = 220;
-        uint16_t touchCalibrationMinY = 3750;
-        uint16_t touchCalibrationMaxY = 350;
+        const uint8_t calibrationCrossPositions = 20;
+        float touchCalibrationRatioX = 0.1106515;
+        uint16_t touchCalibrationOffsetX = 220;
+        float touchCalibrationRatioY = 0.085588;
+        uint16_t touchCalibrationOffsetY = 350;
 
         graphics::Page *currentPage = nullptr;
 
@@ -45,7 +46,10 @@ namespace hardware
         void handleTouchIsr(uint16_t *maxNextRunTime);
         bool hasScreen();
         void setRotation(uint8_t newRotation);
+        uint16_t getRotatedSizeX();
+        uint16_t getRotatedSizeY();
         void drawRGBBitmap(int16_t x, int16_t y, uint16_t *bitmap, int16_t w, int16_t h);
+        bool updateCalibration(uint16_t *calibrationPoints);
         void applyCalibration(uint16_t *touchPos_x, uint16_t *touchPos_y);
 
     private:

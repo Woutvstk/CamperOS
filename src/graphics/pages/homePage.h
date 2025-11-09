@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "array"
 
-#define homePageElementCount 2
+#define homePageElementCount 3
 
 namespace graphics
 {
@@ -14,6 +14,7 @@ namespace graphics
     public:
         homePage();
 
+        elementRectangle Background;
         elementRectangle Rectangle0;
         elementCircle Circle0;
 
