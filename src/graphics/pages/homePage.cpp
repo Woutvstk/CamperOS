@@ -5,9 +5,9 @@ namespace graphics
     homePage::homePage() :
 
                            Page(pageElements.data(), homePageElementCount),
-                           Background(0, 0, 320, 240, 0x0000),
-                           Rectangle0(5, 5, 50, 50, 0xc956),
-                           Circle0(100, 50, 15, 15, 0xca25)
+                           Background(0, 0, 1, 1, 0x0000),
+                           Rectangle0(0.01, 0.01, 0.2, 0.2, 0xc956),
+                           Circle0(0.5 - 0.08 / 2, 0.5 - 0.08 / 2, 0.08, 0.08, 0xca25)
     {
         pageElements = {
             &Background,

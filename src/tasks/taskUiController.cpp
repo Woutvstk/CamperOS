@@ -33,13 +33,10 @@ void taskUiController(void *parameter)
     touchScreen0.enableTouchIsr(touchInputIsr);
     touchScreen0.setRotation(3);
     touchScreen0.setBrightness(255);
-    // adjust white background dimensions of calibration page
-    calibration.Background.size_x_px = touchScreen0.getRotatedSizeX();
-    calibration.Background.size_y_px = touchScreen0.getRotatedSizeY();
 
     uint8_t rotaryValue = 70;
     bool rotary_direction = false;
-    SdrawerInstruction drawerInstruction = {&home, &(touchScreen0)};
+    SdrawerInstruction drawerInstruction = {&environment, &(touchScreen0)};
 
     vTaskDelay(100);
     uint8_t startPoint = 0;
@@ -65,7 +62,6 @@ void taskUiController(void *parameter)
                 if (touchScreen0.currentPage != &calibration)
                 {
                     touchScreen0.applyCalibration(&touchPos_x, &touchPos_y);
-                    Serial.printf("calibrated position: x: %d, y: %d\n", touchPos_x, touchPos_y);
                     touchInputEvent event0 = touchScreen0.currentPage->getInputEvent(touchPos_x, touchPos_y, touchPos_z);
 
                     if (event0.sourceElement != nullptr)
@@ -91,8 +87,8 @@ void taskUiController(void *parameter)
                             }
                             else if (event0.sourceElement == &home.Background)
                             {
-                                home.Circle0.pos_x_px = touchPos_x - home.Circle0.size_x_px / 2;
-                                home.Circle0.pos_y_px = touchPos_y - home.Circle0.size_y_px / 2;
+                                home.Circle0.pos_x_rel = (float)touchPos_x / touchScreen0.getRotatedSizeX() - home.Circle0.size_x_rel / 2;
+                                home.Circle0.pos_y_rel = (float)touchPos_y / touchScreen0.getRotatedSizeY() - home.Circle0.size_y_rel / 2;
                             }
                         }
                     }
@@ -156,7 +152,6 @@ void initializePages()
     environment.Text0.enableFill = true;
     environment.Circle0.touchAble = true;
     environment.Text0.touchAble = true;
-    environment.Cross0.width = 2;
 
     environment.Graph1.graphFill = false;
     environment.Graph1.graphLineColor = ILI9341_RED;
@@ -169,9 +164,8 @@ void initializePages()
     environment.Graph1.axesWidth = 0;
 
     // calibration page
-    calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_px / 2;
-    calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_px / 2;
-    Serial.printf("initialized calib cross at x: %d, y: %d\n", calibration.Cross.pos_x_px, calibration.Cross.pos_y_px);
+    calibration.Cross.pos_x_rel = (float)touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_rel / 2;
+    calibration.Cross.pos_y_rel = (float)touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_rel / 2;
     calibration.Cross.width = 2;
 
     // home page
@@ -189,24 +183,24 @@ void doCalibration(SdrawerInstruction *currentDrawerInstruction, const uint16_t 
     case 0:
         calibrationPoints[0] = *new_touchPos_x;
         calibrationPoints[1] = *new_touchPos_y;
-        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_px / 2;
-        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_y_px / 2;
+        calibration.Cross.pos_x_rel = (float)touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_rel / 2;
+        calibration.Cross.pos_y_rel = (float)(100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_y_rel / 2;
         calibrationStep++;
         break;
 
     case 1:
         calibrationPoints[2] = *new_touchPos_x;
         calibrationPoints[3] = *new_touchPos_y;
-        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_x_px / 2;
-        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_y_px / 2;
+        calibration.Cross.pos_x_rel = (float)(100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_x_rel / 2;
+        calibration.Cross.pos_y_rel = (float)(100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_y_rel / 2;
         calibrationStep++;
         break;
 
     case 2:
         calibrationPoints[4] = *new_touchPos_x;
         calibrationPoints[5] = *new_touchPos_y;
-        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_x_px / 2;
-        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_px / 2;
+        calibration.Cross.pos_x_rel = (float)(100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_x_rel / 2;
+        calibration.Cross.pos_y_rel = (float)touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_rel / 2;
         calibrationStep++;
         break;
 
@@ -220,10 +214,11 @@ void doCalibration(SdrawerInstruction *currentDrawerInstruction, const uint16_t 
             printf("Updating calibration succesfull. Xratio: %f, Xoffset: %d, Yratio: %f, Yoffset: %d\n", touchScreen0.touchCalibrationRatioX, touchScreen0.touchCalibrationOffsetX, touchScreen0.touchCalibrationRatioY, touchScreen0.touchCalibrationOffsetY);
             delay(50);
         }
-        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_px / 2;
-        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_px / 2;
+        calibration.Cross.pos_x_rel = (float)touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_rel / 2;
+        calibration.Cross.pos_y_rel = (float)touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_rel / 2;
         currentDrawerInstruction->page = nextPage;
         calibrationStep = 0;
+
         break;
     }
 

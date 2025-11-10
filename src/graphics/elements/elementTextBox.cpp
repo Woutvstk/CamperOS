@@ -6,7 +6,7 @@
 namespace graphics
 {
 
-    bool elementTextBox::draw(GFXcanvas16 *screen)
+    bool elementTextBox::drawAbsolute(GFXcanvas16 *screen)
     {
         // use temporary canvas so that text wrapping can do its thing
 

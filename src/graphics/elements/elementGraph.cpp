@@ -12,7 +12,7 @@
 namespace graphics
 {
 
-    bool elementGraph::draw(GFXcanvas16 *screen)
+    bool elementGraph::drawAbsolute(GFXcanvas16 *screen)
     {
         bool functionSucces = true;
 
