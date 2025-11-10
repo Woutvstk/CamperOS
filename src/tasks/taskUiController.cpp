@@ -5,6 +5,7 @@ using namespace hardware;
 
 // forward declarations
 void initializePages();
+void doCalibration(SdrawerInstruction *currentDrawerInstruction, const uint16_t *new_touchPos_x, const uint16_t *new_touchPos_y, Page *nextPage);
 
 IRAM_ATTR
 void touchInputIsr(void)
@@ -32,6 +33,9 @@ void taskUiController(void *parameter)
     touchScreen0.enableTouchIsr(touchInputIsr);
     touchScreen0.setRotation(3);
     touchScreen0.setBrightness(255);
+    // adjust white background dimensions of calibration page
+    calibration.Background.size_x_px = touchScreen0.getRotatedSizeX();
+    calibration.Background.size_y_px = touchScreen0.getRotatedSizeY();
 
     uint8_t rotaryValue = 70;
     bool rotary_direction = false;
@@ -44,13 +48,10 @@ void taskUiController(void *parameter)
     uint16_t touchPos_y = 0;
     uint8_t touchPos_z = 0;
 
-    uint8_t calibrationStep = 0;
-
     initializePages();
 
     while (true)
     {
-
         ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(notifyWaitTime)); // wait for UiUpdateRate or notification, portMAX_DELAY for no timeout
         notifyWaitTime = defaultUiControllerNotifyWait;          // change notifyWaitTime to default. Can be reduced during this run if needed
 
@@ -103,49 +104,8 @@ void taskUiController(void *parameter)
                 }
                 else // touched calibration page
                 {
-
-                    switch (calibrationStep % 4)
-                    {
-                        static uint16_t calibrationPoints[8]; // Xmin1, Ymin1, Xmin2, Ymax1, Xmax1, Ymax2, Xmax2, Ymin2
-                    case 0:
-
-                        calibrationPoints[0] = touchPos_x;
-                        calibrationPoints[1] = touchPos_y;
-                        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_px / 2;
-                        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_y_px / 2;
-                        break;
-
-                    case 1:
-                        calibrationPoints[2] = touchPos_x;
-                        calibrationPoints[3] = touchPos_y;
-                        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_x_px / 2;
-                        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_y_px / 2;
-                        break;
-
-                    case 2:
-                        calibrationPoints[4] = touchPos_x;
-                        calibrationPoints[5] = touchPos_y;
-                        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_x_px / 2;
-                        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_px / 2;
-                        break;
-
-                    case 3:
-                        calibrationPoints[6] = touchPos_x;
-                        calibrationPoints[7] = touchPos_y;
-
-                        if (touchScreen0.updateCalibration(calibrationPoints))
-                        {
-                            delay(50);
-                            printf("Updating calibration succesfull. Xratio: %f, Xoffset: %d, Yratio: %f, Yoffset: %d\n", touchScreen0.touchCalibrationRatioX, touchScreen0.touchCalibrationOffsetX, touchScreen0.touchCalibrationRatioY, touchScreen0.touchCalibrationOffsetY);
-                            delay(50);
-                        }
-                        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_px / 2;
-                        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_px / 2;
-                        drawerInstruction.page = &home;
-                        break;
-                    }
-                    calibrationStep++;
-                    delay(200); // extra debounce
+                    // needs to be run 4 times, draws crosses and saves touch input values to then calculate new calibration values
+                    doCalibration(&drawerInstruction, &touchPos_x, &touchPos_y, &home);
                 }
             }
             else
@@ -217,4 +177,55 @@ void initializePages()
     // home page
     home.Rectangle0.touchAble = true;
     home.Background.touchAble = true;
+}
+
+void doCalibration(SdrawerInstruction *currentDrawerInstruction, const uint16_t *new_touchPos_x, const uint16_t *new_touchPos_y, Page *nextPage)
+{
+    static uint8_t calibrationStep = 0;
+
+    switch (calibrationStep % 4)
+    {
+        static uint16_t calibrationPoints[8]; // Xmin1, Ymin1, Xmin2, Ymax1, Xmax1, Ymax2, Xmax2, Ymin2
+    case 0:
+        calibrationPoints[0] = *new_touchPos_x;
+        calibrationPoints[1] = *new_touchPos_y;
+        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_px / 2;
+        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_y_px / 2;
+        calibrationStep++;
+        break;
+
+    case 1:
+        calibrationPoints[2] = *new_touchPos_x;
+        calibrationPoints[3] = *new_touchPos_y;
+        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_x_px / 2;
+        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_y_px / 2;
+        calibrationStep++;
+        break;
+
+    case 2:
+        calibrationPoints[4] = *new_touchPos_x;
+        calibrationPoints[5] = *new_touchPos_y;
+        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * (100 - touchScreen0.calibrationCrossPositions) / 100 - calibration.Cross.size_x_px / 2;
+        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_px / 2;
+        calibrationStep++;
+        break;
+
+    case 3:
+        calibrationPoints[6] = *new_touchPos_x;
+        calibrationPoints[7] = *new_touchPos_y;
+
+        if (touchScreen0.updateCalibration(calibrationPoints))
+        {
+            delay(50);
+            printf("Updating calibration succesfull. Xratio: %f, Xoffset: %d, Yratio: %f, Yoffset: %d\n", touchScreen0.touchCalibrationRatioX, touchScreen0.touchCalibrationOffsetX, touchScreen0.touchCalibrationRatioY, touchScreen0.touchCalibrationOffsetY);
+            delay(50);
+        }
+        calibration.Cross.pos_x_px = touchScreen0.getRotatedSizeX() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_px / 2;
+        calibration.Cross.pos_y_px = touchScreen0.getRotatedSizeY() * touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_px / 2;
+        currentDrawerInstruction->page = nextPage;
+        calibrationStep = 0;
+        break;
+    }
+
+    delay(200); // extra debounce
 }

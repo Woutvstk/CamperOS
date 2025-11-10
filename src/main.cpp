@@ -91,8 +91,8 @@ void setup()
   enable interupts for rotary
   */
 
-  attachInterrupt(digitalPinToInterrupt(rotary_ClkPin), rotaryISR, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(rotary_DtPin), rotaryISR, CHANGE);
+  // attachInterrupt(digitalPinToInterrupt(rotary_ClkPin), rotaryISR, CHANGE);
+  // attachInterrupt(digitalPinToInterrupt(rotary_DtPin), rotaryISR, CHANGE);
 
   /*
    FreeRTOS tasks

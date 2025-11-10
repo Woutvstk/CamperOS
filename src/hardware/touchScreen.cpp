@@ -42,7 +42,17 @@ namespace hardware
     {
         if (touch != nullptr)
         {
-            touch->readRaw(x, y, z);
+            switch (rotation % 4)
+            {
+            case 0:
+            case 2:
+                touch->readRaw(y, x, z);
+                break;
+            case 1:
+            case 3:
+                touch->readRaw(x, y, z);
+                break;
+            }
         }
     }
 
