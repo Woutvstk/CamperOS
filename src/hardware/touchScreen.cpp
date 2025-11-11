@@ -141,7 +141,6 @@ namespace hardware
 
     bool touchScreen::updateCalibration(uint16_t *calibrationPoints)
     {
-        Serial.printf("Ymin1: %d", calibrationPoints[1]);
         // calibrationPoints[]: [0]Xmin1, [1]Ymin1, [2]Xmin2, [3]Ymax1, [4]Xmax1, [5]Ymax2, [6]Xmax2, [7]Ymin2
         touchCalibrationRatioX = (float)(2 * getRotatedSizeX() * (100 - 2 * calibrationCrossPositions)) / (calibrationPoints[0] + calibrationPoints[2] - calibrationPoints[4] - calibrationPoints[6]) / 100;
         touchCalibrationRatioY = (float)(2 * getRotatedSizeY() * (100 - 2 * calibrationCrossPositions)) / (calibrationPoints[1] + calibrationPoints[7] - calibrationPoints[3] - calibrationPoints[5]) / 100;
@@ -154,7 +153,6 @@ namespace hardware
 
     void touchScreen::applyCalibration(uint16_t *touchPos_x, uint16_t *touchPos_y)
     {
-        Serial.printf("conversion before: %d, after: %f,  ", *touchPos_y, ((*touchPos_y - touchCalibrationOffsetY) * touchCalibrationRatioY));
         *touchPos_x = (uint16_t)(getRotatedSizeX() - (*touchPos_x - touchCalibrationOffsetX) * touchCalibrationRatioX);
         *touchPos_y = (uint16_t)(getRotatedSizeY() - (*touchPos_y - touchCalibrationOffsetY) * touchCalibrationRatioY);
     }

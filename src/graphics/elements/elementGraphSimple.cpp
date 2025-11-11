@@ -3,7 +3,7 @@
 namespace graphics
 {
 
-    bool elementGraphSimple::draw(GFXcanvas16 *screen)
+    bool elementGraphSimple::drawAbsolute(GFXcanvas16 *screen)
     {
 
         if (data != nullptr && pointCount != 0)

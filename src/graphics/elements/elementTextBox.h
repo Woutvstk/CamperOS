@@ -23,9 +23,9 @@ namespace graphics
         uint16_t padding = 3;
         alignment textAlign = LEFT;
 
-        elementTextBox(uint16_t pos_x_px, uint16_t pos_y_px, uint16_t size_x_px, uint16_t size_y_px, uint16_t color)
-            : pageElement(pos_x_px, pos_y_px, size_x_px, size_y_px), textColor(color) {};
-        bool draw(GFXcanvas16 *screen) override;
+        elementTextBox(float pos_x_rel, float pos_y_rel, float size_x_rel, float size_y_rel, uint16_t color)
+            : pageElement(pos_x_rel, pos_y_rel, size_x_rel, size_y_rel), textColor(color) {};
+        bool drawAbsolute(GFXcanvas16 *screen) override;
         touchInputEvent getTouchInputEvent(uint16_t touchPos_x, uint16_t touchPos_y, uint8_t touch_z) override;
 
     private:

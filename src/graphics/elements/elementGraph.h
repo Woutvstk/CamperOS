@@ -29,9 +29,9 @@ namespace graphics
         uint8_t *data = NULL;
         uint8_t pointCount = 0;
 
-        elementGraph(uint16_t p_pos_x_px, uint16_t p_pos_y_px, uint16_t p_size_x_px, uint16_t p_size_y_px, uint16_t p_color)
-            : pageElement(p_pos_x_px, p_pos_y_px, p_size_x_px, p_size_y_px), axesColor(p_color), graphLineColor(p_color), graphFillColor(p_color), axesLabelColor(p_color) {};
-        bool draw(GFXcanvas16 *screen) override;
+        elementGraph(float pos_x_rel, float pos_y_rel, float size_x_rel, float size_y_rel, uint16_t color)
+            : pageElement(pos_x_rel, pos_y_rel, size_x_rel, size_y_rel), axesColor(color), graphLineColor(color), graphFillColor(color), axesLabelColor(color) {};
+        bool drawAbsolute(GFXcanvas16 *screen) override;
         touchInputEvent getTouchInputEvent(uint16_t touchPos_x, uint16_t touchPos_y, uint8_t touch_z);
 
     private:

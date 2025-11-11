@@ -5,8 +5,8 @@ namespace graphics
     calibrationPage::calibrationPage() :
 
                                          Page(pageElements.data(), calibrationPageElementCount),
-                                         Background(0, 0, 320, 240, 0xffff),
-                                         Cross(0, 0, 20, 20, 0x0000)
+                                         Background(0, 0, 1, 1, 0xffff),
+                                         Cross(0, 0, 0.08, 0.08, 0x0000)
     {
         pageElements = {
             &Background,

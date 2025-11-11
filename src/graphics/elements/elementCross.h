@@ -10,8 +10,8 @@ namespace graphics
         uint16_t color;
         uint8_t width = 1;
 
-        elementCross(uint16_t p_pos_x_px, uint16_t p_pos_y_px, uint16_t p_size_x_px, uint16_t p_size_y_px, uint16_t p_color)
-            : pageElement(p_pos_x_px, p_pos_y_px, p_size_x_px, p_size_y_px), color(p_color) {};
-        bool draw(GFXcanvas16 *screen) override;
+        elementCross(float pos_x_rel, float pos_y_rel, float size_x_rel, float size_y_rel, uint16_t color)
+            : pageElement(pos_x_rel, pos_y_rel, size_x_rel, size_y_rel), color(color) {};
+        bool drawAbsolute(GFXcanvas16 *screen) override;
     };
 }
