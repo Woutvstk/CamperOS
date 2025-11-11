@@ -20,7 +20,7 @@ namespace graphics
             uint16_t elementDataOffset = 0;
             for (uint8_t i = 0; i < elementCount; i++)
             {
-                if (pageElements[i])
+                if (pageElements[i]->visible)
                 {
                     pageElements[i]->draw(screen);
                 }

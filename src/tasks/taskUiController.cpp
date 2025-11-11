@@ -36,7 +36,7 @@ void taskUiController(void *parameter)
 
     uint8_t rotaryValue = 70;
     bool rotary_direction = false;
-    SdrawerInstruction drawerInstruction = {&environment, &(touchScreen0)};
+    SdrawerInstruction drawerInstruction = {&testCalibration, &(touchScreen0)};
 
     vTaskDelay(100);
     uint8_t startPoint = 0;
@@ -69,26 +69,30 @@ void taskUiController(void *parameter)
                         if (touchScreen0.currentPage == &environment)
                         {
                             Serial.println("Page is environment");
-                            if (event0.sourceElement == &environment.Circle0)
+                            if (event0.sourceElement == &environment.Rectangle0)
                             {
                                 printf("touched circle with value: %d\n", event0.data.unsignedNumber);
-                                drawerInstruction.page = &calibration;
+                                drawerInstruction.page = &testCalibration;
                             }
                             else
                             {
                                 printf("touched other with value: %d\n", event0.data.unsignedNumber);
                             }
                         }
-                        else if (touchScreen0.currentPage == &home)
+                        else if (touchScreen0.currentPage == &testCalibration)
                         {
-                            if (event0.sourceElement == &home.Rectangle0)
+                            if (event0.sourceElement == &testCalibration.buttonCalibrate)
                             {
                                 drawerInstruction.page = &calibration;
                             }
-                            else if (event0.sourceElement == &home.Background)
+                            else if (event0.sourceElement == &testCalibration.buttonDone)
                             {
-                                home.Circle0.pos_x_rel = (float)touchPos_x / touchScreen0.getRotatedSizeX() - home.Circle0.size_x_rel / 2;
-                                home.Circle0.pos_y_rel = (float)touchPos_y / touchScreen0.getRotatedSizeY() - home.Circle0.size_y_rel / 2;
+                                drawerInstruction.page = &environment; // TODO: change to home page
+                            }
+                            else if (event0.sourceElement == &testCalibration.Background)
+                            {
+                                testCalibration.Circle0.pos_x_rel = (float)touchPos_x / touchScreen0.getRotatedSizeX() - testCalibration.Circle0.size_x_rel / 2;
+                                testCalibration.Circle0.pos_y_rel = (float)touchPos_y / touchScreen0.getRotatedSizeY() - testCalibration.Circle0.size_y_rel / 2;
                             }
                         }
                     }
@@ -101,7 +105,7 @@ void taskUiController(void *parameter)
                 else // touched calibration page
                 {
                     // needs to be run 4 times, draws crosses and saves touch input values to then calculate new calibration values
-                    doCalibration(&drawerInstruction, &touchPos_x, &touchPos_y, &home);
+                    doCalibration(&drawerInstruction, &touchPos_x, &touchPos_y, &testCalibration);
                 }
             }
             else
@@ -151,6 +155,7 @@ void initializePages()
     environment.Text0.fillColor = ILI9341_RED;
     environment.Text0.enableFill = true;
     environment.Circle0.touchAble = true;
+    environment.Rectangle0.touchAble = true;
     environment.Text0.touchAble = true;
 
     environment.Graph1.graphFill = false;
@@ -168,9 +173,26 @@ void initializePages()
     calibration.Cross.pos_y_rel = (float)touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_rel / 2;
     calibration.Cross.width = 2;
 
-    // home page
-    home.Rectangle0.touchAble = true;
-    home.Background.touchAble = true;
+    // testCalibration page
+    testCalibration.Background.touchAble = true;
+
+    testCalibration.buttonDone.touchAble = true;
+    testCalibration.buttonDone.text = "DONE";
+    testCalibration.buttonDone.textSize = 2;
+    testCalibration.buttonDone.borderWidth = 3;
+    testCalibration.buttonDone.borderColor = 0xFFFF;
+    testCalibration.buttonDone.textAlign = CENTRE;
+    testCalibration.buttonDone.fillColor = ILI9341_GREEN;
+    testCalibration.buttonDone.enableFill = true;
+
+    testCalibration.buttonCalibrate.touchAble = true;
+    testCalibration.buttonCalibrate.text = "Calibrate";
+    testCalibration.buttonCalibrate.textSize = 2;
+    testCalibration.buttonCalibrate.borderWidth = 3;
+    testCalibration.buttonCalibrate.borderColor = 0xFFFF;
+    testCalibration.buttonCalibrate.textAlign = CENTRE;
+    testCalibration.buttonCalibrate.fillColor = ILI9341_YELLOW;
+    testCalibration.buttonCalibrate.enableFill = true;
 }
 
 void doCalibration(SdrawerInstruction *currentDrawerInstruction, const uint16_t *new_touchPos_x, const uint16_t *new_touchPos_y, Page *nextPage)
@@ -216,11 +238,9 @@ void doCalibration(SdrawerInstruction *currentDrawerInstruction, const uint16_t 
         }
         calibration.Cross.pos_x_rel = (float)touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_x_rel / 2;
         calibration.Cross.pos_y_rel = (float)touchScreen0.calibrationCrossPositions / 100 - calibration.Cross.size_y_rel / 2;
-        currentDrawerInstruction->page = nextPage;
         calibrationStep = 0;
-
+        currentDrawerInstruction->page = nextPage;
         break;
     }
-
     delay(200); // extra debounce
 }

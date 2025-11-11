@@ -24,6 +24,7 @@ namespace graphics
         float size_x_rel;
         float size_y_rel;
 
+        bool visible = true;
         bool touchAble = false;
 
         // constructor that takes the relative start position and (rectangular) size
